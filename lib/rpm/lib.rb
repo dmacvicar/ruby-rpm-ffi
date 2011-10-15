@@ -7,14 +7,11 @@ module RPM
 
     extend FFI::Library
 
-    # find librpm
-    paths = Array(ENV['RPM_LIB'] || Dir['/{opt,usr}/{,local/}lib{,64}/librpm.{dylib,so*}'])
-
     begin
-      ffi_lib(*paths)
-    rescue LoadError => le
+      ffi_lib('rpm')
+    rescue LoadError => e
       raise(
-        "Can't find rpm libs on your system. "
+        "Can't find rpm libs on your system: #{e.message}"
       )
     end
 
