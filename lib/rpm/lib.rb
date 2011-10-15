@@ -295,6 +295,11 @@ module RPM
       :nokey, 4
     )
 
+    # rpmlib
+
+    attach_variable :RPMVERSION, :RPMVERSION, :string
+    attach_variable :RPMEVR, :rpmEVR, :string
+
     # Macro
     attach_variable :MACROFILES, :macrofiles, :string
     # ...
@@ -353,6 +358,11 @@ module RPM
     # rpmdb.h
     attach_function 'rpmdbNextIterator', [:pointer], :pointer
     attach_function 'rpmdbFreeIterator', [:pointer], :pointer
+
+    def self.rpm_version_code
+      ver = Lib.RPMVERSION.split('.', 3)
+      return (ver[0].to_i<<16) + (ver[1].to_i<<8) + (ver[2].to_i<<0)
+    end
 
   end
 

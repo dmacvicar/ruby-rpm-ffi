@@ -17,7 +17,8 @@ module RPM
   end
 
   def self.[](name)
-    ptr = FFI::MemoryPointer.new(:pointer, 1024)
+    val = String.new
+    ptr = FFI::MemoryPointer.new(:pointer, 1)
     ret = RPM::Lib.expandMacros(nil, nil, ptr, 1024)
     ptr.read_string
   end
