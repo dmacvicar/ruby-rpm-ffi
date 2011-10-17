@@ -2,21 +2,24 @@ require File.join(File.dirname(__FILE__), 'helper')
 
 class RPM_RPM_Tests < Test::Unit::TestCase
 
-  def test_gc
-    RPM.transaction do |t|
-
-    end
-  end
-
   def test_enum
     assert RPM::Tag[:not_found]
   end
 
+  def test_compat
+    assert_raise(NameError) { RPM::LOG_ALERT }
+
+    require 'rpm/compat'
+    assert_nothing_raised { RPM::LOG_ALERT }
+    assert_equal RPM::LOG_ALERT, RPM::LogLevel[:alert]
+  end
+
   def test_iterator
     RPM.transaction do |t|
-      t.each do |pkg|
-        puts pkg[:name]
-      end
+      assert_kind_of RPM::Transaction, t
+      #t.each do |pkg|
+      #  puts pkg[:name]
+      #end
     end
   end
 

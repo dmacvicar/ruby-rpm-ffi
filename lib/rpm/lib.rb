@@ -15,6 +15,8 @@ module RPM
       )
     end
 
+    # rpmtag
+
     Tag = enum(
       :not_found, -1,
       :headerimage, 61,
@@ -283,7 +285,7 @@ module RPM
       :sha1header, Tag[:sha1header]
     )
 
-    # RPMRC
+    # rpmtypes
     Rc = enum(
       :ok, 0,
       :notfound, 1,
@@ -293,15 +295,33 @@ module RPM
     )
 
     # rpmlib
-
     attach_variable :RPMVERSION, :RPMVERSION, :string
     attach_variable :RPMEVR, :rpmEVR, :string
+    # ...
+    attach_function :rpmvercmp, [:string, :string], :int
+    
+
+    # rpmlog
+    RPMLOG_PRIMASK = 0x07
+
+    LogLevel = enum(
+      :emerg, 0,
+      :alert, 1,
+      :crit, 2,
+      :err, 3,
+      :warning, 4,
+      :notice, 5,
+      :info, 6,
+      :debug, 7
+    )
+
+    attach_function 'rpmlogSetMask', [:int], :int
+    # TODO: defines to set verbosity
 
     # Macro
     attach_variable :MACROFILES, :macrofiles, :string
     # ...
     attach_function 'expandMacros', [:pointer, :pointer, :pointer, :size_t], :int
-    #int     expandMacros (void *spec, rpmMacroContext mc, char *sbuf, size_t slen)
     # ...
     attach_function 'rpmInitMacros', [:pointer, :string], :void
     # ...
