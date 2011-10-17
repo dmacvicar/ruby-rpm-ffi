@@ -1,5 +1,9 @@
+require 'rpm'
 
 module RPM
-  PKG_NAME = "ruby-rpm"
-  VERSION = "2.0"
+
+  class Version
+
+  end
+
 end

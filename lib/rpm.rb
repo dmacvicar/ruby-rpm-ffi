@@ -36,7 +36,7 @@ end
 
 RPM::Lib.rpmReadConfigFiles(nil, nil)
 RPM::Lib.rpmInitMacros(nil, RPM::Lib.MACROFILES)
-puts RPM::Lib.MACROFILES
+
 # TODO
 # set verbosity
 
