@@ -4,8 +4,12 @@ module RPM
 
   class Version
 
+    include Comparable
 
+    # Parses a "epoch:version-release" string
+    # @return [Array] tuple [epoch, version, release]
     def self.parse_evr(evr)
+      raise ArgumentError, "version can't be nil" if evr.nil?
       version = evr
       epoch = nil
       release = nil
@@ -14,11 +18,11 @@ module RPM
       version, release = version[0..idx-1], version[idx+1..-1] if idx
       
       idx = version.index(/\D/)
-      if (version[idx] == ?:)
+      if (idx && version[idx] == ?:)
         epoch = version[0..idx-1]
         version = version[idx+1..-1]
       end
-      return epoch, version, release
+      return epoch ? epoch.to_i : nil, version, release
     end
 
     #
@@ -46,18 +50,104 @@ module RPM
           raise(ArgumentError "wrong number of arguments (0 for 1..3)")
         when 1:
           RPM::Utils.check_type(argv[0], String)
+          @e, @v, @r = RPM::Version.parse_evr(argv[0])
         when 2:
-
+          # (vr, e)
+          RPM::Utils.check_type(argv[0], String)
+          @e, @v, @r = RPM::Version.parse_evr(argv[0])
+          @e = argv[1] ? argv[1].to_i : nil
         when 3:
           RPM::Utils.check_type(argv[0], String)
           RPM::Utils.check_type(argv[1], String)
           @v = argv[0]
           @r = argv[1]
-          @e = argv[2].to_i
+          @e = argv[2] ? argv[2].to_i : nil
         else
           raise(ArgumentError "too many arguments (#{args.size} for 1..3)")
       end
+    end
 
+    # @return [String] the version component
+    def v
+      @v
+    end
+
+    # @return [String] the release component
+    #   or +nil+
+    def r
+      @r
+    end
+
+    # @return [String] the epoch component
+    #   or +nil+
+    def e
+      @e
+    end
+
+    # Comparison between versions
+    # @param [Version] other
+    # @return [Number] -1 if +other+ is greater than, 0 if +other+ is equal to,
+    #   and +1 if other is less than version.
+    #
+    # @example
+    #   v1 = RPM::Version.new("3.0-0",1)
+    #   v2 = RPM::Version.new("3.1-0",1)
+    #   v1 <=> v2
+    #   => -1
+    #
+    def <=>(other)
+      RPM::Utils.check_type(other, RPM::Version)
+      ret = RPM::FFI.rpmvercmp(to_vre_epoch_zero, other.to_vre_epoch_zero)
+    end
+
+    # @param [Version] other Version to compare against
+    # @return [Boolean] true if the version is newer than +other+
+    def newer?(other)
+      (self <=> other) > 0
+    end
+
+
+    # @param [Version] other Version to compare against
+    # @return [Boolean] true if the version is older than +other+
+    def older?(other)
+      ! newer?(other)
+    end
+
+    # String representation in the form "v-r"
+    # @return [String]
+    # @note The epoch is not included
+    def to_vr
+      vr = @r.nil? ? "#{@v}" : "#{@v}-#{@r}"
+    end
+
+    # String representation in the form "e:v-r"
+    # @return [String]
+    # @note The epoch is included if present
+    def to_vre(opts={})
+      vr = to_vr
+      vre = @e.nil? ? vr : "#{@e}:#{vr}"
+    end
+
+    # Alias for +to_vr+
+    # @see Version#to_vr
+    def to_s
+      to_vr
+    end
+
+    # Hash based on the version content
+    # @return [String]
+    def hash
+      h = @e.nil? ? 0 : @e;
+      h = (h << 1) ^ @r.hash
+      h = (h << 1) ^ @v.hash
+    end
+
+    # String representation in the form "e:v-r"
+    # @return [String]
+    # @note The epoch is included always. As 0 if not present
+    def to_vre_epoch_zero
+      vr = to_vr
+      vre = @e.nil? ? "0:#{vr}" : "#{@e}:#{vr}"
     end
 
   end

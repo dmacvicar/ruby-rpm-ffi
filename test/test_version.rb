@@ -9,10 +9,14 @@ class RPM_Version_Tests < Test::Unit::TestCase
   end
 
   def test_parse_evr
-    assert_equal ['23', '1.0.3','1suse'], RPM::Version.parse_evr("23:1.0.3-1suse")
+    assert_equal [23, '1.0.3', '1suse'],
+      RPM::Version.parse_evr("23:1.0.3-1suse")
+    assert_equal [nil, '1.0', nil],
+      RPM::Version.parse_evr("1.0")
+    assert_equal [nil, '2.0', '3'],
+      RPM::Version.parse_evr("2.0-3")
   end
 
-=begin
   def test_version_compare
     assert( @a > @b )
     assert( @a < @c )
@@ -47,12 +51,6 @@ class RPM_Version_Tests < Test::Unit::TestCase
     assert_equal( '1:0.9.0-1m', @d.to_vre )
   end
 
-  def test_inspect
-      v = RPM::Version.new("1", "2", 3)
-      assert_equal(3, v.e)
-      assert_equal('#<RPM::Version v="1", r="2", e=3>', v.inspect)
-  end
-
   def test_epoch_none_zero
       v1 = RPM::Version.new("1-2")
       v2 = RPM::Version.new("0:1-2")
@@ -61,5 +59,5 @@ class RPM_Version_Tests < Test::Unit::TestCase
       assert( v1 == v2 )
       assert_equal(v1.hash, v2.hash)
   end
-=end
+
 end
