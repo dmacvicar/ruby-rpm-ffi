@@ -253,7 +253,7 @@ module RPM
       :firstfree_tag ]
     )
 
-    DBI = enum(
+    Dbi = enum(
       :packages, 0,
       :label, 2,
       :name, Tag[:name],
@@ -269,5 +269,18 @@ module RPM
       :sigmd5, Tag[:sigmd5],
       :sha1header, Tag[:sha1header]
     )
+
+    TagType = enum( :tag_type, [
+      :null_type, 0,
+      :char_type, 1,
+      :int8_type, 2,
+      :int16_type, 3,
+      :int32_type, 4,
+      :int64_type, 5,
+      :string_type, 6,
+      :bin_type, 7,
+      :string_array_type, 8,
+      :i18nstring_type, 9 ])
+
   end
 end

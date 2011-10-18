@@ -25,6 +25,7 @@ require 'rpm/ffi/rpmmacro'
 require 'rpm/ffi/header'
 require 'rpm/ffi/rpmts'
 require 'rpm/ffi/rpmds'
+require 'rpm/ffi/rpmtd'
 require 'rpm/ffi/rpmdb'
 
 module RPM

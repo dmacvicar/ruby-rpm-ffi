@@ -1,11 +1,8 @@
+require 'rpm'
 
 module RPM
 
-  class Package
-
-    def initialize(header)
-      @header
-    end
+  class Package < Header
 
   end
 

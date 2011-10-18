@@ -8,6 +8,10 @@ module RPM
       RPM::FFI.headerFree(ptr)
     end
 
+    def self.release_td(ptr)
+      RPM::FFI.rpmTdFree(ptr)
+    end
+
     def initialize(hdr=nil)
       if hdr.nil?
         @hdr = ::FFI::AutoPointer.new(RPM::FFI.headerNew, Header.method(:release))
@@ -25,7 +29,21 @@ module RPM
     end
 
     def [](tag)
-      RPM::FFI.headerGetAsString(@hdr, tag)
+
+      val = nil
+      tagc = ::FFI::AutoPointer.new(RPM::FFI.rpmtdNew, Header.method(:release_td))
+
+      puts ptr
+      puts tag
+      puts tagc
+
+      return tagval if (RPM::FFI.headerGet(ptr, tag, tagc, 
+                    RPM::FFI::HEADERGET_DEFAULT) == 0)
+      
+      case RPM::FFI.rpmtdType(tagc)
+        when TagType[:string_type] then RPM::FFI.rpmtdGetString(tagc)
+        else raise NotImplementedError
+      end
     end
 
     # @return [String] This package name

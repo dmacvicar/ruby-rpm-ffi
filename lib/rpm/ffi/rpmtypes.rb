@@ -10,6 +10,7 @@ module RPM
       :nottrusted, 3,
       :nokey, 4
     )
-    
+
+    typedef :int32, :tag_val
   end
 end
