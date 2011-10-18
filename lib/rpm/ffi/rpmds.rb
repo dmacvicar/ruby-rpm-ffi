@@ -3,7 +3,7 @@ module RPM
 
     module FFI
 
-        Sense = enum(
+        Sense = enum(:sense, [
             :any, 0,
             :less, (1 << 1),
             :greater, (1 << 2),
@@ -36,7 +36,13 @@ module RPM
             :triggerprein, (1 << 25),
             :keyring, (1 << 26),
             :strong, (1 << 27),
-            :config, (1 << 28)
+            :config, (1 << 28) ]
         )
+
+        # ...
+        attach_function 'rpmdsSingle', [:tag, :string, :string, :sense], :pointer
+        # ...
+        attach_function 'rpmdsCompare', [:pointer, :pointer], :int
+
     end
 end

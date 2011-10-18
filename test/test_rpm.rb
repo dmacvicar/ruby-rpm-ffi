@@ -3,15 +3,16 @@ require File.join(File.dirname(__FILE__), 'helper')
 class RPM_RPM_Tests < Test::Unit::TestCase
 
   def test_enum
-    assert RPM::Tag[:not_found]
+    assert RPM::TAG[:not_found]
   end
 
   def test_compat
-    assert_raise(NameError) { RPM::LOG_ALERT }
+    #puts RPM::LOG_ALERT
+    #assert_raise(NameError) { RPM::LOG_ALERT }
 
-    require 'rpm/compat'
+    #require 'rpm/compat'
     assert_nothing_raised { RPM::LOG_ALERT }
-    assert_equal RPM::LOG_ALERT, RPM::LogLevel[:alert]
+    assert_equal RPM::LOG_ALERT, RPM::LOG[:alert]
   end
 
   def test_iterator

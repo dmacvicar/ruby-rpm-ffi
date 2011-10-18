@@ -31,7 +31,7 @@ module RPM
   module FFI
 
     def self.rpm_version_code
-      ver = RPMVERSION.split('.', 3)
+      ver = ::RPM::FFI.RPMVERSION.split('.', 3)
       return (ver[0].to_i<<16) + (ver[1].to_i<<8) + (ver[2].to_i<<0)
     end
 

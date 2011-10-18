@@ -2,7 +2,7 @@ module RPM
 
   module FFI
 
-  	Tag = enum(
+  	Tag = enum(:tag, [
       :not_found, -1,
       :headerimage, 61,
       :headersignatures, 62,
@@ -250,7 +250,7 @@ module RPM
       :ordername, 5035,
       :orderversion, 5036,
       :orderflags, 5037,
-      :firstfree_tag
+      :firstfree_tag ]
     )
 
     DBI = enum(

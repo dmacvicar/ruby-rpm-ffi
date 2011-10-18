@@ -10,11 +10,11 @@ module RPM
 
     def initialize(hdr=nil)
       if hdr.nil?
-        @hdr = FFI::AutoPointer.new(RPM::FFI.headerNew, Header.method(:release))
-      elsif hdr.is_a?(FFI::Pointer)
+        @hdr = ::FFI::AutoPointer.new(RPM::FFI.headerNew, Header.method(:release))
+      elsif hdr.is_a?(::FFI::Pointer)
         # ref
         hdr = RPM::FFI.headerLink(hdr)
-        @hdr = FFI::AutoPointer.new(hdr, Header.method(:release))
+        @hdr = ::FFI::AutoPointer.new(hdr, Header.method(:release))
       else
         raise "Can't initialize header with '#{hdr}'"
       end
@@ -42,8 +42,8 @@ module RPM
 
     # @return [Version] Version for this package
     def version
-      v_ptr = FFI::MemoryPointer.new(:pointer, 1)
-      r_ptr = FFI::MemoryPointer.new(:pointer, 1)
+      v_ptr = ::FFI::MemoryPointer.new(:pointer, 1)
+      r_ptr = ::FFI::MemoryPointer.new(:pointer, 1)
 
       RPM::FFI.headerNVR(ptr, nil, v_ptr, r_ptr)
       v = v_ptr.read_pointer
@@ -53,7 +53,7 @@ module RPM
 
     def self.open(filename)
       # it sucks not using the std File.open here
-      hdr = FFI::MemoryPointer.new(:pointer)
+      hdr = ::FFI::MemoryPointer.new(:pointer)
       fd = nil
       begin
         fd = RPM::FFI.Fopen(filename, 'r')

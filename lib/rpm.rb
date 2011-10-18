@@ -30,7 +30,7 @@ module RPM
   # @return [String] value of macro +name+
   def self.[](name)
     val = String.new
-    buffer = FFI::MemoryPointer.new(:pointer, 1024)
+    buffer = ::FFI::MemoryPointer.new(:pointer, 1024)
     buffer.write_string("%{#{name}}")
     ret = RPM::FFI.expandMacros(nil, nil, buffer, 1024)
     buffer.read_string

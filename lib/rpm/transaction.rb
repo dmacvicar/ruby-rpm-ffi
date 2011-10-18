@@ -5,12 +5,12 @@ module RPM
   class Transaction
 
     def self.release(ptr)
-      RPM::Lib.rpmtsFree(ptr)
+      RPM::FFI.rpmtsFree(ptr)
     end
 
     def initialize
-      @ts = FFI::AutoPointer.new(RPM::Lib.rpmtsCreate, Transaction.method(:release))
-      RPM::Lib.rpmtsSetRootDir(@ts, "/")
+      @ts = ::FFI::AutoPointer.new(RPM::FFI.rpmtsCreate, Transaction.method(:release))
+      RPM::FFI.rpmtsSetRootDir(@ts, "/")
     end
 
     def ptr
@@ -18,12 +18,12 @@ module RPM
     end
     
     def each
-      it = RPM::Lib.rpmtsInitIterator(@ts, 0, nil, 0)
+      it = RPM::FFI.rpmtsInitIterator(@ts, 0, nil, 0)
       #STDERR.puts it.class
-      while (not (header = RPM::Lib.rpmdbNextIterator(it)).null?)
+      while (not (header = RPM::FFI.rpmdbNextIterator(it)).null?)
         yield Header.new(header)
       end
-      RPM::Lib.rpmdbFreeIterator(it)
+      RPM::FFI.rpmdbFreeIterator(it)
     end
 
 

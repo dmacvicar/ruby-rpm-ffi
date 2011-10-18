@@ -1,15 +1,11 @@
 require File.join(File.dirname(__FILE__), 'helper')
+require 'rpm/compat'
 
 class RPM_Dependency_Tests < Test::Unit::TestCase
     
     EQ = RPM::SENSE_EQUAL
     LT = RPM::SENSE_LESS
     GT = RPM::SENSE_GREATER
-
-    #EQ = RPM::SENSE[:equal]
-    #LT = RPM::SENSE[:less]
-    #GT = RPM::SENSE[:greater]
-
 
     def test_satisfy
         prv = provide("foo", "2", "1", 0, EQ)
