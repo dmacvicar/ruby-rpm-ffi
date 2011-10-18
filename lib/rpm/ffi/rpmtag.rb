@@ -1,23 +1,8 @@
-require 'rubygems'
-require 'ffi'
-
 module RPM
 
-  module Lib
+  module FFI
 
-    extend FFI::Library
-
-    begin
-      ffi_lib('rpm')
-    rescue LoadError => e
-      raise(
-        "Can't find rpm libs on your system: #{e.message}"
-      )
-    end
-
-    # rpmtag
-
-    Tag = enum(
+  	Tag = enum(
       :not_found, -1,
       :headerimage, 61,
       :headersignatures, 62,
@@ -268,7 +253,7 @@ module RPM
       :firstfree_tag
     )
 
-    DbiTag = enum(
+    DBI = enum(
       :packages, 0,
       :label, 2,
       :name, Tag[:name],
@@ -284,107 +269,5 @@ module RPM
       :sigmd5, Tag[:sigmd5],
       :sha1header, Tag[:sha1header]
     )
-
-    # rpmtypes
-    Rc = enum(
-      :ok, 0,
-      :notfound, 1,
-      :fail, 2,
-      :nottrusted, 3,
-      :nokey, 4
-    )
-
-    # rpmlib
-    attach_variable :RPMVERSION, :RPMVERSION, :string
-    attach_variable :RPMEVR, :rpmEVR, :string
-    # ...
-    attach_function :rpmvercmp, [:string, :string], :int
-    
-
-    # rpmlog
-    RPMLOG_PRIMASK = 0x07
-
-    LogLevel = enum(
-      :emerg, 0,
-      :alert, 1,
-      :crit, 2,
-      :err, 3,
-      :warning, 4,
-      :notice, 5,
-      :info, 6,
-      :debug, 7
-    )
-
-    attach_function 'rpmlogSetMask', [:int], :int
-    # TODO: defines to set verbosity
-
-    # Macro
-    attach_variable :MACROFILES, :macrofiles, :string
-    # ...
-    attach_function 'expandMacros', [:pointer, :pointer, :pointer, :size_t], :int
-    # ...
-    attach_function 'rpmInitMacros', [:pointer, :string], :void
-    # ...
-
-    # RPMIO
-    attach_function 'Fstrerror', [:pointer], :string
-    # ...
-    attach_function 'Fclose', [:pointer], :int
-    # ...
-    attach_function 'Fopen', [:string, :string], :pointer
-    # ...
-    attach_function 'Ferror', [:pointer], :int
-
-
-    ############################
-
-    attach_function 'rpmReadConfigFiles', [:string, :string], :int
-
-    attach_function 'headerNew', [], :pointer
-    attach_function 'headerFree', [:pointer], :pointer
-    attach_function 'headerLink', [:pointer], :pointer
-    # ..
-    attach_function 'headerNVR', [:pointer, :pointer, :pointer, :pointer], :int
-    # ...
-    attach_function 'headerGetAsString', [:pointer, Tag], :string
-    # ...
-    attach_function 'rpmReadPackageFile', [:pointer, :pointer, :string, :pointer], Rc
-
-    attach_function 'rpmtsCheck', [:pointer], :int
-    attach_function 'rpmtsOrder', [:pointer], :int
-    attach_function 'rpmtsRun', [:pointer, :pointer, :int], :int
-    attach_function 'rpmtsLink', [:pointer], :pointer
-    attach_function 'rpmtsCloseDB', [:pointer], :int
-    attach_function 'rpmtsOpenDB', [:pointer, :int], :int
-    attach_function 'rpmtsInitDB', [:pointer, :int], :int
-    attach_function 'rpmtsGetDBMode', [:pointer], :int
-    attach_function 'rpmtsSetDBMode', [:pointer, :int], :int
-    attach_function 'rpmtsRebuildDB', [:pointer], :int
-    attach_function 'rpmtsVerifyDB', [:pointer], :int
-    attach_function 'rpmtsInitIterator', [:pointer, Tag, :pointer, :int], :pointer
-    #.... 
-    #attach_function 'rpmtsHeaderAddDB', [:pointer, :pointer], :int
-    #attach_function 'rpmtsHeaderRemoveDB', [:pointer, :int], :int
-    
-    # more...
-    
-    attach_function 'rpmtsFree', [:pointer], :pointer
-    #..
-    attach_function 'rpmtsRootDir', [:pointer], :string
-    attach_function 'rpmtsSetRootDir', [:pointer, :string], :int
-    #...
-    attach_function 'rpmtsCreate', [], :pointer
-
-
-    # rpmdb.h
-    attach_function 'rpmdbNextIterator', [:pointer], :pointer
-    attach_function 'rpmdbFreeIterator', [:pointer], :pointer
-
-    def self.rpm_version_code
-      ver = Lib.RPMVERSION.split('.', 3)
-      return (ver[0].to_i<<16) + (ver[1].to_i<<8) + (ver[2].to_i<<0)
-    end
-
   end
-
 end

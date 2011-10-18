@@ -6,9 +6,8 @@ module RPM
 
     def initialize(name, version, flags, owner)
 
-      raise TypeError.new("illegal argument type")
-        unless version.is_a?(RPM::Version)
-
+      RPM::Utils.check_type(version, RPM::Version)
+      
       @name = name
       @version = version
       @flags = flags
@@ -20,9 +19,9 @@ module RPM
   class Provide < Dependency
 
     def initialize(name, version, flags, owner)
-      @nametag = RPM::Tag[:providename]
-      @versiontag = RPM::Tag[:provideversion]
-      @flagstag = RPM::Tag[:provideflags]
+      @nametag = RPM::TAG[:providename]
+      @versiontag = RPM::TAG[:provideversion]
+      @flagstag = RPM::TAG[:provideflags]
     end
 
   end
@@ -30,9 +29,9 @@ module RPM
   class Require < Dependency
 
     def initialize(name, version, flags, owner)
-      @nametag = RPM::Tag[:requirename]
-      @versiontag = RPM::Tag[:requireversion]
-      @flagstag = RPM::Tag[:requireflags]
+      @nametag = RPM::TAG[:requirename]
+      @versiontag = RPM::TAG[:requireversion]
+      @flagstag = RPM::TAG[:requireflags]
     end
 
   end
@@ -40,9 +39,9 @@ module RPM
   class Conflict < Dependency
 
     def initialize(name, version, flags, owner)
-      @nametag = RPM::Tag[:conflictname]
-      @versiontag = RPM::Tag[:conflictversion]
-      @flagstag = RPM::Tag[:conflictflags]
+      @nametag = RPM::TAG[:conflictname]
+      @versiontag = RPM::TAG[:conflictversion]
+      @flagstag = RPM::TAG[:conflictflags]
     end
 
   end
@@ -50,9 +49,9 @@ module RPM
   class Conflict < Dependency
 
     def initialize(name, version, flags, owner)
-      @nametag = RPM::Tag[:conflictname]
-      @versiontag = RPM::Tag[:conflictversion]
-      @flagstag = RPM::Tag[:conflictflags]
+      @nametag = RPM::TAG[:conflictname]
+      @versiontag = RPM::TAG[:conflictversion]
+      @flagstag = RPM::TAG[:conflictflags]
     end
 
   end

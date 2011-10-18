@@ -1,4 +1,4 @@
-require 'rpm/lib'
+require 'rpm'
 
 module RPM
 

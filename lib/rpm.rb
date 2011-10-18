@@ -1,21 +1,25 @@
 
-require 'rpm/lib'
+require 'rpm/ffi'
 require 'rpm/header'
 require 'rpm/transaction'
+require 'rpm/version'
+require 'rpm/dependency'
+require 'rpm/utils'
 
 module RPM
 
   module LibC
-    extend FFI::Library
-    ffi_lib FFI::Library::LIBC
+    extend ::FFI::Library
+    ffi_lib ::FFI::Library::LIBC
 
     # call #attach_function to attach to malloc, free, memcpy, bcopy, etc.
      attach_function :malloc, [:size_t], :pointer
   end
 
 
-  Tag = RPM::Lib::Tag
-  LogLevel = RPM::Lib::LogLevel
+  TAG = RPM::FFI::Tag
+  LOG = RPM::FFI::Log
+  SENSE = RPM::FFI::Sense
   
   def self.transaction
     yield Transaction.new
@@ -28,15 +32,16 @@ module RPM
     val = String.new
     buffer = FFI::MemoryPointer.new(:pointer, 1024)
     buffer.write_string("%{#{name}}")
-    ret = RPM::Lib.expandMacros(nil, nil, buffer, 1024)
+    ret = RPM::FFI.expandMacros(nil, nil, buffer, 1024)
     buffer.read_string
   end
 
 end
-
-RPM::Lib.rpmReadConfigFiles(nil, nil)
-RPM::Lib.rpmInitMacros(nil, RPM::Lib.MACROFILES)
+ 
+RPM::FFI.rpmReadConfigFiles(nil, nil)
+RPM::FFI.rpmInitMacros(nil, RPM::FFI.MACROFILES)
 
 # TODO
 # set verbosity
 
+require 'rpm/compat'

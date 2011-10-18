@@ -1,19 +1,19 @@
-require 'rpm/lib'
+require 'rpm/ffi'
 
 module RPM
 
   class Header
 
     def self.release(ptr)
-      RPM::Lib.headerFree(ptr)
+      RPM::FFI.headerFree(ptr)
     end
 
     def initialize(hdr=nil)
       if hdr.nil?
-        @hdr = FFI::AutoPointer.new(RPM::Lib.headerNew, Header.method(:release))
+        @hdr = FFI::AutoPointer.new(RPM::FFI.headerNew, Header.method(:release))
       elsif hdr.is_a?(FFI::Pointer)
         # ref
-        hdr = RPM::Lib.headerLink(hdr)
+        hdr = RPM::FFI.headerLink(hdr)
         @hdr = FFI::AutoPointer.new(hdr, Header.method(:release))
       else
         raise "Can't initialize header with '#{hdr}'"
@@ -25,7 +25,7 @@ module RPM
     end
 
     def [](tag)
-      RPM::Lib.headerGetAsString(@hdr, tag)
+      RPM::FFI.headerGetAsString(@hdr, tag)
     end
 
     # @return [String] This package name
@@ -45,7 +45,7 @@ module RPM
       v_ptr = FFI::MemoryPointer.new(:pointer, 1)
       r_ptr = FFI::MemoryPointer.new(:pointer, 1)
 
-      RPM::Lib.headerNVR(ptr, nil, v_ptr, r_ptr)
+      RPM::FFI.headerNVR(ptr, nil, v_ptr, r_ptr)
       v = v_ptr.read_pointer
       r = r_ptr.read_pointer
       "#{v.read_string}-#{r.read_string}"
@@ -56,15 +56,15 @@ module RPM
       hdr = FFI::MemoryPointer.new(:pointer)
       fd = nil
       begin
-        fd = RPM::Lib.Fopen(filename, 'r')
-        if RPM::Lib.Ferror(fd) != 0
-          raise "#{filename} : #{RPM::Lib.Fstrerror(fd)}"
+        fd = RPM::FFI.Fopen(filename, 'r')
+        if RPM::FFI.Ferror(fd) != 0
+          raise "#{filename} : #{RPM::FFI.Fstrerror(fd)}"
         end
         RPM.transaction do |ts|
-          rc = RPM::Lib.rpmReadPackageFile(ts.ptr, fd, filename, hdr)
+          rc = RPM::FFI.rpmReadPackageFile(ts.ptr, fd, filename, hdr)
         end
       ensure
-        RPM::Lib.Fclose(fd) unless fd.nil?
+        RPM::FFI.Fclose(fd) unless fd.nil?
       end
       Header.new(hdr.get_pointer(0))
     end
