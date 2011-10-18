@@ -36,6 +36,17 @@ module RPM
     buffer.read_string
   end
 
+  # Setup a macro
+  # @param [String] name Name of the macro
+  # @param [String] value Value of the macro or +nil+ to delete it
+  def self.[]=(name, value)
+    if value.nil?
+      RPM::FFI.delMacro(nil, name.to_s)
+    else
+      RPM::FFI.addMacro(nil, name.to_s, nil, value.to_s, RPM::FFI::RMIL_DEFAULT)
+    end
+  end
+
 end
  
 RPM::FFI.rpmReadConfigFiles(nil, nil)

@@ -28,10 +28,10 @@ class RPM_RPM_Tests < Test::Unit::TestCase
     assert_equal '/usr', RPM['_usr']
   end
 
-  #def test_macro_write
-  #  RPM['hoge'] = 'hoge'
-  #  assert_equal( RPM['hoge'], 'hoge' )
-  #end # def test_macro_write
+  def test_macro_write
+    RPM['hoge'] = 'hoge'
+    assert_equal( RPM['hoge'], 'hoge' )
+  end
 
 
 end # class RPM_RPM_Tests < Test::Unit::TestCase
