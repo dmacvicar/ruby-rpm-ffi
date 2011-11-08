@@ -16,6 +16,9 @@ module RPM
 
     # ..
     attach_function 'headerGet', [:pointer, :tag_val, :pointer, :uint32], :int
+    attach_function 'headerPut', [:pointer, :pointer, :uint32], :int
+    # ...
+    attach_function 'headerFormat', [:pointer, :string, :pointer], :pointer
     # ...
     attach_function 'headerNVR', [:pointer, :pointer, :pointer, :pointer], :int
     # ...

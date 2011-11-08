@@ -1,6 +1,6 @@
 
 require 'rpm/ffi'
-require 'rpm/header'
+require 'rpm/package'
 require 'rpm/transaction'
 require 'rpm/version'
 require 'rpm/dependency'

@@ -17,8 +17,8 @@ module RPM
   end
 end
 
-require 'rpm/ffi/rpmtag'
 require 'rpm/ffi/rpmtypes'
+require 'rpm/ffi/rpmtag'
 require 'rpm/ffi/rpmlib'
 require 'rpm/ffi/rpmlog'
 require 'rpm/ffi/rpmmacro'

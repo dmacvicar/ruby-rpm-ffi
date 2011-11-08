@@ -282,5 +282,16 @@ module RPM
       :string_array_type, 8,
       :i18nstring_type, 9 ])
 
+      TagReturnType = enum(
+        :any_return_type, 0,
+        :scalar_return_type, 0x00010000,
+        :array_return_type, 0x00020000,
+        :mapping_return_type, 0x00040000,
+        :mask_return_type, 0xffff0000
+      )
+
+      attach_function 'rpmTagGetReturnType', [:tag_val], TagReturnType
+
+
   end
 end
