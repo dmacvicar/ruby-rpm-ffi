@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Duncan Mac-Vicar P."]
   s.email       = ["dmacvicar@suse.de"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{Ruby bindings for rpm (package manager)}
+  s.description = %q{Ruby bindings for rpm. Almost a drop-in replacement for ruby-rpm. Uses FFI.}
 
   s.rubyforge_project = "rpm"
 
@@ -20,5 +20,5 @@ Gem::Specification.new do |s|
 
   # specify any dependencies here; for example:
   # s.add_development_dependency "rspec"
-  # s.add_runtime_dependency "rest-client"
+  s.add_runtime_dependency "ffi"
 end
