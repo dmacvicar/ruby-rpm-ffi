@@ -1,0 +1,15 @@
+
+= rpm bindings for ruby
+
+* http://github.com/dmacvicar/ruby-rpm
+
+= INTRODUCTION
+
+This library is a replacement for the
+
+= TODO
+
+* Package#load
+* Package#add_dependency
+* Package#signature should return String?
+    => ruby-rpm seems to return symbol
