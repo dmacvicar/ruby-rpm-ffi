@@ -3,13 +3,51 @@
 
 * http://github.com/dmacvicar/ruby-rpm
 
+= WARNING
+
+This is an alpha release! There is still work to be done
+
 = INTRODUCTION
 
-This library is a replacement for the
+This library is a replacement for the ruby-rpm gem, originally
+writen by Kenta Murata in 2002, later mantained by David Lutterkort
+and myself.
+
+Why?
+
+* The original gem supports ancient rpm versions
+* The original gem was written in C using MRI API
+* The #ifdef required to support multiple rpm versions made the code
+  hard to maintain
+
+This gem:
+
+* Is pure ruby
+* Uses FFI, so it should work with other interpreters
+* The goal is to support rpm in the latest versions
+* Does not target rpm5, but it may support it someday
+
+As an example the code that implements RPM::Package was reduced
+from 1130 lines of code to 320.
 
 = TODO
 
+* RPM::Spec is missing
+* RPM::DB is missing needs to be redesigned to match
+  current rpm API
 * Package#load
 * Package#add_dependency
-* Package#signature should return String?
+* All header manipulation methods:
+    Package#add_int32
+    Package#add_string_array
+    ...
+    Package#delete_tag
+* Check Package#signature should return String?
     => ruby-rpm seems to return symbol
+* Food for thought: Package dependencies and changelog
+  methods could just use []. Calling headerGet directly saves
+  us from doing one iteration per attribute
+
+= LICENSE
+
+* MIT

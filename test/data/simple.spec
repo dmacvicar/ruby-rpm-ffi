@@ -36,4 +36,7 @@ echo "Hola" > %{buildroot}%{_datadir}/%{name}/README.es
 %{_datadir}/%{name}/README.es
 
 %changelog
-
+* Wed Nov 06 2011 Duncan Mac-Vicar P. <dmacvicar@suse.de>
+- Fix something
+* Tue Nov 05 2011 Duncan Mac-Vicar P. <dmacvicar@suse.de>
+- Fix something else

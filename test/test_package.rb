@@ -11,32 +11,42 @@ class RPM_Header_Tests < Test::Unit::TestCase
 
   def test_open
     
-    hdr = RPM::Package.open(fixture('simple-1.0-0.i586.rpm'))
+    pkg = RPM::Package.open(fixture('simple-1.0-0.i586.rpm'))
     
-    assert_equal '3fe8fc4ca14571eaa2fedbdab1f0308f', hdr.signature
+    assert_equal "simple-1.0-0-i586", pkg.to_s
 
-    assert_kind_of RPM::Package, hdr
-    assert_equal 'simple', hdr[:name]
-    assert_equal 'i586', hdr[:arch]
-    assert_equal '1.0-0', hdr.version
+    assert_equal '6895248ed5a081f73d035174329169c7', pkg.signature
+
+    assert_kind_of RPM::Package, pkg
+    assert_equal 'simple', pkg[:name]
+    assert_equal 'i586', pkg[:arch]
+    assert_equal '1.0-0', pkg.version
 
     backup_lang = ENV['LANG']
 
     ENV['LANG'] = 'C'
-    assert_equal 'Simple dummy package', hdr[:summary]
-    assert_equal 'Dummy package', hdr[:description]
+    assert_equal 'Simple dummy package', pkg[:summary]
+    assert_equal 'Dummy package', pkg[:description]
     
     ENV['LANG'] = 'es'
-    assert_equal 'Paquete simple de muestra', hdr[:summary]
-    assert_equal 'Paquete de muestra', hdr[:description]
+    assert_equal 'Paquete simple de muestra', pkg[:summary]
+    assert_equal 'Paquete de muestra', pkg[:description]
 
     ENV['LANG'] = backup_lang
     
     # Arrays
-    assert_equal ["root", "root"], hdr[:fileusername]
-    assert_equal [6, 5], hdr[:filesizes]
+    assert_equal ["root", "root"], pkg[:fileusername]
+    assert_equal [6, 5], pkg[:filesizes]
 
-    assert_equal [], hdr.files
+    assert pkg.provides.map(&:name).include?("simple(x86-32)")
+    assert pkg.provides.map(&:name).include?("simple")
+
+    assert pkg.requires.map(&:name).include?("/bin/sh")
+
+    assert pkg.files.map(&:path).include?("/usr/share/simple/README")
+    assert pkg.files.map(&:path).include?("/usr/share/simple/README.es")
+
+    assert_equal ["- Fix something", "- Fix something else"], pkg.changelog.map(&:text)
   end
 
 end
