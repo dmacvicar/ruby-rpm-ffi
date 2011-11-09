@@ -1,4 +1,5 @@
 require 'rpm/ffi'
+require 'rpm/file'
 
 module RPM
 
@@ -36,6 +37,41 @@ module RPM
       val = RPM::FFI.headerFormat(@hdr, '%{sigmd5}', error)
       raise error.get_pointer(0).read_string if val.null?
       val.read_string
+    end
+
+    # @return [Array<RPM::File>] File list for this package
+    def files
+      basenames = self[:basenames]
+      dirnames = self[:dirnames]
+      diridxs = self[:dirindexes]
+      statelist = self[:filestates]
+      flaglist = self[:fileflags]
+      sizelist = self[:filesizes]
+      modelist = self[:filemodes]
+      mtimelist = self[:filemtimes]
+      rdevlist = self[:filerdevs]
+      linklist = self[:filelinktos]
+      md5list = self[:filemd5s]
+      ownerlist = self[:fileusername]
+      grouplist = self[:filegroupname]
+
+      ret = []
+      basenames.each_with_index do |basename, i|
+        file = RPM::File.new("#{dirnames[diridxs[i]]}#{basenames[i]}",
+                md5list[i],
+                linklist.nil? ? nil : linklist[i],
+                sizelist[i],
+                mtimelist[i],
+                ownerlist[i],
+                grouplist[i],
+                rdevlist[i],
+                modelist[i],
+                flaglist.nil? ? RPM::FFI::FileAttrs[:none] : flaglist[i],
+                statelist.nil? ? RPM::FFI::FileState[:normal] : statelist[i]
+        )
+        ret << file
+      end
+      ret
     end
 
     # Access a header entry
@@ -135,7 +171,7 @@ module RPM
 
     # @visibility private
     def self.release_td(ptr)
-      RPM::FFI.rpmTdFree(ptr)
+      RPM::FFI.rpmtdFree(ptr)
     end
 
     # @visibility private

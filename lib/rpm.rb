@@ -20,6 +20,8 @@ module RPM
   TAG = RPM::FFI::Tag
   LOG = RPM::FFI::Log
   SENSE = RPM::FFI::Sense
+  FILE = RPM::FFI::FileAttrs
+  FILE_STATE = RPM::FFI::FileState
   
   def self.transaction
     yield Transaction.new

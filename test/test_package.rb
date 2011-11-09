@@ -35,6 +35,8 @@ class RPM_Header_Tests < Test::Unit::TestCase
     # Arrays
     assert_equal ["root", "root"], hdr[:fileusername]
     assert_equal [6, 5], hdr[:filesizes]
+
+    assert_equal [], hdr.files
   end
 
 end

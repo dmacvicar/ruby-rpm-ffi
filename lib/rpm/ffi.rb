@@ -27,6 +27,7 @@ require 'rpm/ffi/rpmts'
 require 'rpm/ffi/rpmds'
 require 'rpm/ffi/rpmtd'
 require 'rpm/ffi/rpmdb'
+require 'rpm/ffi/rpmfi'
 
 module RPM
   module FFI

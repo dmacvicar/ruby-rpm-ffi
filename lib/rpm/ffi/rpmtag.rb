@@ -61,6 +61,7 @@ module RPM
       :filerdevs, 1033,
       :filemtimes, 1034,
       :filedigests, 1035,
+      :filemd5s, 1035,
       :filelinktos, 1036,
       :fileflags, 1037,
       :root, 1038,
