@@ -3,7 +3,9 @@ module RPM
 
     module FFI
 
-        Sense = enum(:sense, [
+      typedef :pointer, :rpmds
+
+        Sense = enum(:rpmsenseFlags_e, [
             :any, 0,
             :less, (1 << 1),
             :greater, (1 << 2),
@@ -38,11 +40,12 @@ module RPM
             :strong, (1 << 27),
             :config, (1 << 28) ]
         )
+        typedef :rpmFlags, :rpmsenseFlags
 
         # ...
-        attach_function 'rpmdsSingle', [:tag, :string, :string, :sense], :pointer
+        attach_function 'rpmdsSingle', [:rpmTagVal, :string, :string, :rpmsenseFlags], :rpmds
         # ...
-        attach_function 'rpmdsCompare', [:pointer, :pointer], :int
+        attach_function 'rpmdsCompare', [:rpmds, :rpmds], :int
 
     end
 end

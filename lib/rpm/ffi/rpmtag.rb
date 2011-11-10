@@ -2,7 +2,7 @@ module RPM
 
   module FFI
 
-  	Tag = enum(:tag, [
+    Tag = enum(:rpmTag, [
       :not_found, -1,
       :headerimage, 61,
       :headersignatures, 62,
@@ -254,7 +254,7 @@ module RPM
       :firstfree_tag ]
     )
 
-    Dbi = enum(
+    Dbi = enum(:rpmDbiTag, [
       :packages, 0,
       :label, 2,
       :name, Tag[:name],
@@ -268,10 +268,10 @@ module RPM
       :dirnames, Tag[:dirnames],
       :installtid, Tag[:installtid],
       :sigmd5, Tag[:sigmd5],
-      :sha1header, Tag[:sha1header]
+      :sha1header, Tag[:sha1header] ]
     )
 
-    TagType = enum( :tag_type, [
+    TagType = enum( :rpmTagType, [
       :null_type, 0,
       :char_type, 1,
       :int8_type, 2,
@@ -283,16 +283,17 @@ module RPM
       :string_array_type, 8,
       :i18nstring_type, 9 ])
 
-      TagReturnType = enum(
-        :any_return_type, 0,
-        :scalar_return_type, 0x00010000,
-        :array_return_type, 0x00020000,
-        :mapping_return_type, 0x00040000,
-        :mask_return_type, 0xffff0000
-      )
+    TagReturnType = enum(:rpmTagReturnType_e, [
+      :any_return_type, 0,
+      :scalar_return_type, 0x00010000,
+      :array_return_type, 0x00020000,
+      :mapping_return_type, 0x00040000,
+      :mask_return_type, 0xffff0000
+      ]
+    )
+    typedef :rpmFlags, :rpmTagReturnType
 
-      attach_function 'rpmTagGetReturnType', [:tag_val], TagReturnType
-
+    attach_function 'rpmTagGetReturnType', [:rpmTagVal], :rpmTagReturnType
 
   end
 end

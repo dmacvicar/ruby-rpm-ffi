@@ -22,6 +22,8 @@ module RPM
   SENSE = RPM::FFI::Sense
   FILE = RPM::FFI::FileAttrs
   FILE_STATE = RPM::FFI::FileState
+  TRANS_FLAG = RPM::FFI::TransFlags
+  PROB_FILTER = RPM::FFI::ProbFilter
   
   def self.transaction
     yield Transaction.new

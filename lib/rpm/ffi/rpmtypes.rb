@@ -11,6 +11,16 @@ module RPM
       :nokey, 4
     )
 
-    typedef :int32, :tag_val
+    typedef :int32, :rpm_tag_t
+    typedef :uint32, :rpm_tagtype_t;
+    typedef :uint32, :rpm_count_t
+    typedef :rpm_tag_t, :rpmTagVal;
+    typedef :rpm_tag_t, :rpmDbiTagVal
+
+    typedef :uint32, :rpmFlags
+
+    typedef :pointer, :FD_t
+    typedef :pointer, :fnpyKey
+
   end
 end

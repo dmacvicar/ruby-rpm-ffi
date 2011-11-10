@@ -3,7 +3,7 @@ module RPM
 
   module FFI
 
-    FileAttrs = enum(:file_attrs, 
+    FileAttrs = enum(:rpmfileAttrs, [
       :none, 0,
       :config, (1 << 0),
       :doc, (1 << 1),
@@ -16,10 +16,11 @@ module RPM
       :readme, (1 << 8),
       :exclude, (1 << 9),
       :unpatched, (1 << 10),
-      :pubkey, (1 << 11)
+      :pubkey, (1 << 11) ]
     )
+    typedef :rpmFlags, :rpmfileAttrs
 
-    FileState = enum(:file_state,
+    FileState = enum(:rpmfileState,
       :missing, -1,
       :normal, 0,
       :replaced, 1,
@@ -27,5 +28,7 @@ module RPM
       :netshared, 3,
       :wrongcolor, 4
     )
+
+    typedef :pointer, :rpmRelocation
   end
 end

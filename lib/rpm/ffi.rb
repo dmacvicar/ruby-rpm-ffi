@@ -23,11 +23,13 @@ require 'rpm/ffi/rpmlib'
 require 'rpm/ffi/rpmlog'
 require 'rpm/ffi/rpmmacro'
 require 'rpm/ffi/header'
+require 'rpm/ffi/rpmprob'
+require 'rpm/ffi/rpmps'
+require 'rpm/ffi/rpmfi'
 require 'rpm/ffi/rpmts'
 require 'rpm/ffi/rpmds'
 require 'rpm/ffi/rpmtd'
 require 'rpm/ffi/rpmdb'
-require 'rpm/ffi/rpmfi'
 
 module RPM
   module FFI
