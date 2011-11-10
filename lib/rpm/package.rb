@@ -219,8 +219,9 @@ module RPM
       end
 
       is_array = case
-        when count != 1 then true
+        when count > 1 then true
         when ret_type == :array_return_type then true
+        when type == :string_array_type then true
         else false
       end
 
