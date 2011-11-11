@@ -46,17 +46,17 @@ module RPM
     def initialize(*argv)
 
       case argv.size
-        when 0:
+        when 0
           raise(ArgumentError "wrong number of arguments (0 for 1..3)")
-        when 1:
+        when 1
           RPM::Utils.check_type(argv[0], String)
           @e, @v, @r = RPM::Version.parse_evr(argv[0])
-        when 2:
+        when 2
           # (vr, e)
           RPM::Utils.check_type(argv[0], String)
           @e, @v, @r = RPM::Version.parse_evr(argv[0])
           @e = argv[1] ? argv[1].to_i : nil
-        when 3:
+        when 3
           RPM::Utils.check_type(argv[0], String)
           RPM::Utils.check_type(argv[1], String)
           @v = argv[0]
