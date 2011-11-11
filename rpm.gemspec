@@ -4,7 +4,7 @@ require "rpm/gem_version"
 
 Gem::Specification.new do |s|
   s.name        = "rpm"
-  s.version     = RPM::VERSION
+  s.version     = RPM::GEM_VERSION
   s.authors     = ["Duncan Mac-Vicar P."]
   s.email       = ["dmacvicar@suse.de"]
   s.homepage    = ""
