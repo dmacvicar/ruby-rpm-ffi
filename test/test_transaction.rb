@@ -3,6 +3,14 @@ require 'tmpdir'
 
 class RPM_Transaction_Tests < Test::Unit::TestCase
 
+  def test_flags
+    RPM.transaction do |t|
+      assert_equal RPM::TRANS_FLAG_NONE, t.flags
+      t.flags = RPM::TRANS_FLAG_TEST
+      assert_equal RPM::TRANS_FLAG_TEST, t.flags
+    end
+  end
+
   def test_install
     
     filename = 'simple-1.0-0.i586.rpm'
@@ -17,7 +25,7 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
         t.flags = RPM::TRANS_FLAG_TEST
         
         t.install(pkg, filename)
-        t.commit
+        #t.commit
       end
     end
 

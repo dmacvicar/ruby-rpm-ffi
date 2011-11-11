@@ -17,10 +17,19 @@ module RPM
     end
 
     def self.create(name, version)
+      if not name.is_a?(String)
+        raise TypeError, "illegal argument type: name should be String"
+      end
+      if not version.is_a?(RPM::Version)
+        raise TypeError, "illegal argument type: version should be RPM::Version"
+      end
       hdr = RPM::FFI.headerNew
-      tagc = ::FFI::AutoPointer.new(RPM::FFI.rpmtdNew, Package.method(:release_td))
-      RPM::FFI.rpmtdFromString(tagc, RPM::FFI::Tag[:name], name)
-      RPM::FFI.headerPut(hdr, tagc, 0)
+      if RPM::FFI.headerPutString(hdr, :name, name) != 1
+        raise "Can't set package name: #{name}"
+      end
+      if RPM::FFI.headerPutString(hdr, :version, ) != 1
+        raise "Can't set package version: #{version}"
+      end
       Package.new(hdr)
     end
 
