@@ -27,8 +27,13 @@ module RPM
       if RPM::FFI.headerPutString(hdr, :name, name) != 1
         raise "Can't set package name: #{name}"
       end
-      if RPM::FFI.headerPutString(hdr, :version, ) != 1
-        raise "Can't set package version: #{version}"
+      if RPM::FFI.headerPutString(hdr, :version, version.v) != 1
+        raise "Can't set package version: #{version.v}"
+      end
+      if version.e
+        if RPM::FFI.headerPutUint32(hdr, :epoch, version.e) != 1
+          raise "Can't set package epoch: #{version.e}"
+        end
       end
       Package.new(hdr)
     end

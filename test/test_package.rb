@@ -4,7 +4,7 @@ class RPM_Header_Tests < Test::Unit::TestCase
 
   def test_create
 
-    pkg = RPM::Package.create('foo', '1.0')
+    pkg = RPM::Package.create('foo', RPM::Version.new('1.0'))
     assert_equal 'foo', pkg.name
     assert_equal '(none)', pkg.signature
   end
