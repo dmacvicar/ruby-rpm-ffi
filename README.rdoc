@@ -15,7 +15,14 @@ This is an alpha release! There is still work to be done
 
     pkg.arch => "x86_64"
 
-    
+    pkg.files.each do |file|
+      puts file.path
+    end
+     
+    pkg.changelog.each do |entry|
+      puts "#{entry.name} #{entry.time} #{entry.text}"
+    end
+
 
 = Introduction
 
@@ -34,8 +41,8 @@ This gem:
 
 * Is pure ruby
 * Is documented
-* We target the current stable rpm for now (4.9). Still supporting at least
-  the Enterprise distros rpm versions is a goal.
+* Has as a goal to support only the latest rpm version plus the ones in 
+  use some releases back in popular rpm based distros
 * Uses FFI, so it should work with other interpreters
 * Does not target rpm5, but it may support it someday
 
@@ -44,19 +51,22 @@ from 1130 lines of code to 320.
 
 = Architecture
 
-= Status and compatibility
+The gem is divided in two modules:
 
-* RPM::DB will be different, as modern rpm APIs do
-  DB queries inside a transaction
-* Check Package#signature should return String?
-    => ruby-rpm seems to return symbol
-* Food for thought: Package dependencies and changelog
-  methods could just use []. Calling headerGet directly saves
-  us from doing one iteration per attribute
-* Not sure if Spec can be implemented as it was before with 
-  newer rpms.
+* RPM::FFI:: which contains the 1:1 mapping to the librpm API
+  Not all functions are attached, only the ones we actually use.
+* RPM:: contains the actual higher level API
 
-== API Checklist
+= Status, Compatibility and Differences with ruby-rpm
+
+* Tested rpm 4.9 only
+* You can use symbols: instead of RPM::TAG_DESCRIPTION you
+  can use just :description. 'rpm/compat' is by default loaded
+  and provides compatibility with the RPM::TAG_* style constants
+* RPM::DB is not supported. Use RPM::Transaction
+* Spec and Source classes are not implemented yet
+
+== API Checklist and TODO
 
 * RPM
 
@@ -253,6 +263,16 @@ from 1130 lines of code to 320.
       [ ] Spec#expand_macros
       [ ] Spec#dup
       [ ] Spec#clone
+
+== TODO
+
+* Check Package#signature should return String?
+    => ruby-rpm seems to return symbol
+* Food for thought: Package dependencies and changelog
+  methods could just use []. Calling headerGet directly saves
+  us from doing one iteration per attribute
+* Not sure if Spec can be implemented as it was before with 
+  newer rpms.
 
 = LICENSE
 
