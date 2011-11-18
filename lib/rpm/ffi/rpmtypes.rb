@@ -21,6 +21,9 @@ module RPM
 
     typedef :pointer, :FD_t
     typedef :pointer, :fnpyKey
+    typedef :pointer, :rpmCallbackData
+
+    typedef :uint64, :rpm_loff_t
 
   end
 end

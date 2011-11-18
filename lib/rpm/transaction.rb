@@ -67,7 +67,13 @@ module RPM
     # end
     # @yield [CallbackData] sig Transaction progress
     def commit
-      flags = RPM::FFI::TransFlags[:none]
+      self.flags = RPM::FFI::TransFlags[:none]
+
+      callback = Proc.new do |h, what, amount, total, key, data|
+        puts "#{h} #{what} #{amount} #{total} #{key} #{data}"
+      end
+
+      RPM::FFI.rpmtsSetNotifyCallback(@ts, callback, nil)
 
       rc = RPM::FFI.rpmtsRun(@ts, nil, :none)
 
