@@ -46,7 +46,7 @@ module RPM
       raise "Can't set #{dir} as root directory" if rc < 0
     end
 
-    # @returns [String ] the root directory for this transaction
+    # @return [String ] the root directory for this transaction
     def root_dir
       RPM::FFI.rpmtsRootDir(@ts)
     end
