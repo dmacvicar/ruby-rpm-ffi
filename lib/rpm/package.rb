@@ -100,6 +100,9 @@ module RPM
     # @return [Array<RPM::File>] File list for this package
     def files
       basenames = self[:basenames]
+
+      return [] if basenames.nil?
+
       dirnames = self[:dirnames]
       diridxs = self[:dirindexes]
       statelist = self[:filestates]
@@ -153,7 +156,7 @@ module RPM
       while RPM::FFI.rpmtdNext(nametd) != -1
         deps << klass.new(RPM::FFI.rpmtdGetString(nametd),
                   RPM::Version.new(RPM::FFI.rpmtdNextString(versiontd)),
-                  RPM::FFI.rpmtdNextUint32(flagtd), self)
+                  RPM::FFI.rpmtdNextUint32(flagtd).read_uint, self)
       end
       deps
     end
@@ -269,9 +272,11 @@ module RPM
       r_ptr = ::FFI::MemoryPointer.new(:pointer, 1)
 
       RPM::FFI.headerNVR(ptr, nil, v_ptr, r_ptr)
-      v = v_ptr.read_pointer
-      r = r_ptr.read_pointer
-      "#{v.read_string}-#{r.read_string}"
+      v = v_ptr.read_pointer.read_string
+      r = r_ptr.read_pointer.read_string
+      v_ptr.free
+      r_ptr.free
+      Version.new(v, r, self[:epoch])
     end
 
     # String representation of the package: "name-version-release-arch"

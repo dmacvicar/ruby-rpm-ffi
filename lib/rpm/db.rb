@@ -1,13 +1,49 @@
+require 'fcntl'
 
 module RPM
 
   class DB
 
+    include Enumerable
+
     # @visibility private
     # @param ts [Transaction] transaction object
-    def initialize(ts)
+    def initialize(ts, opts={})
+      opts[:writable] ||= false
+
       @ts = ts
-      RPM::FFI.rpmtsOpenDB(@ts.ptr, 0)
+      RPM::FFI.rpmtsOpenDB(@ts.ptr, opts[:writable] ? Fcntl::O_RDWR | Fcntl::O_CREAT : Fcntl::O_RDONLY )
+    end
+
+    # @return [RPM::MatchIterator] Creates an iterator for +tag+ and +val+
+    def init_iterator(tag, val)
+      @ts.init_iterator(tag, val)
+    end
+
+    #
+    # @yield [Package] Called for each match
+    # @param [Number] key RPM tag key
+    # @param [String] val Value to match
+    # @example
+    #   RPM.transaction do |t|
+    #     t.each_match(RPM::TAG_ARCH, "x86_64") do |pkg|
+    #       puts pkg.name
+    #     end
+    #   end
+    #
+    def each_match(key, val, &block)
+      @ts.each_match(key, val, &block)
+    end
+
+    #
+    # @yield [Package] Called for each package in the database
+    # @example
+    #   db.each do |pkg|
+    #     puts pkg.name
+    #   end
+    #
+    def each(&block)
+      @ts.each(&block)
     end
 
     # @visibility private
@@ -23,13 +59,27 @@ module RPM
       ptr.null?
     end
 
-    def self.open
-      open_for_transaction(Transaction.new)
+    #
+    # The package database is opened, but transactional processing
+    # (@see RPM::DB#transaction) cannot be done for when +writable+ is false.
+    # When +writable+ is +false+ then the generated object gets freezed.
+    # @param [Boolean] writable Whether the database is writable. Default is +false+.
+    # @param [String] root Root path for the database, default is empty.
+    # @return [RPM::DB]
+    #
+    # @example
+    #   db = RPM::DB.open
+    #   db.each do |pkg|
+    #     puts pkg.name
+    #   end
+    #
+    def self.open(writable=false, root='/')
+      open_for_transaction(Transaction.new(:root => root), :writable => false)
     end
 
     # @visibility private
-    def self.open_for_transaction(ts)
-      db = new(ts)
+    def self.open_for_transaction(ts, opts={})
+      db = new(ts, opts)
       return db unless block_given?
 
       begin

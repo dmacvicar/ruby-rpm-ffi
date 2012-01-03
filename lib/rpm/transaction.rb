@@ -8,18 +8,21 @@ module RPM
       RPM::FFI.rpmtsFree(ptr)
     end
 
-    def initialize
+    def initialize(opts={})
+
+      opts[:root] ||= '/'
+
       @ptr = ::FFI::AutoPointer.new(RPM::FFI.rpmtsCreate, Transaction.method(:release))
-      RPM::FFI.rpmtsSetRootDir(@ptr, "/")
+      RPM::FFI.rpmtsSetRootDir(@ptr, opts[:root])
     end
 
     # @return [RPM::MatchIterator] Creates an iterator for +tag+ and +val+
     def init_iterator(tag, val)
       raise TypeError if (val && !val.is_a?(String))
       
-      it_ptr = RPM::FFI.rpmtsInitIterator(@ptr, tag, val, 0)
+      it_ptr = RPM::FFI.rpmtsInitIterator(@ptr, tag.nil? ? 0 : tag, val, 0)
       
-      raise "Can't init iterator for :#{tag}:#{p.get_string(0)}" if it_ptr.null?
+      raise "Can't init iterator for [#{tag}] -> '#{val}'" if it_ptr.null?
       return MatchIterator.from_ptr(it_ptr)
     end
 
@@ -47,8 +50,15 @@ module RPM
       it.each(&block)
     end
 
+    #
+    # @yield [Package] Called for each package in the database
+    # @example
+    #   db.each do |pkg|
+    #     puts pkg.name
+    #   end
+    #
     def each(&block)
-      each_match(0, 0, &block)
+      each_match(0, nil, &block)
     end
 
     # Add a install operation to the transaction

@@ -31,6 +31,11 @@ module RPM
     # @return [Boolean] true if +other+ satisfies this dependency
     def satisfy?(other)
       case other
+        when RPM::Package then
+          other.provides.each do |prov|
+            return true if self.satisfy?(prov)
+          end
+          return false
         when RPM::Dependency then
           RPM::FFI.rpmdsCompare(
             RPM::FFI.rpmdsSingle(:providename, other.name,
