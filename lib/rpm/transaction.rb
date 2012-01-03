@@ -9,21 +9,46 @@ module RPM
     end
 
     def initialize
-      @ts = ::FFI::AutoPointer.new(RPM::FFI.rpmtsCreate, Transaction.method(:release))
-      RPM::FFI.rpmtsSetRootDir(@ts, "/")
+      @ptr = ::FFI::AutoPointer.new(RPM::FFI.rpmtsCreate, Transaction.method(:release))
+      RPM::FFI.rpmtsSetRootDir(@ptr, "/")
     end
 
+    # @return [RPM::MatchIterator] Creates an iterator for +tag+ and +val+
+    def init_iterator(tag, val)
+      raise TypeError if (val && !val.is_a?(String))
+      
+      it_ptr = RPM::FFI.rpmtsInitIterator(@ptr, tag, val, 0)
+      
+      raise "Can't init iterator for :#{tag}:#{p.get_string(0)}" if it_ptr.null?
+      return MatchIterator.from_ptr(it_ptr)
+    end
+
+    # @visibility private
     def ptr
-      @ts
+      @ptr
     end
     
-    def each
-      it = RPM::FFI.rpmtsInitIterator(@ts, 0, nil, 0)
-      #STDERR.puts it.class
-      while (not (header = RPM::FFI.rpmdbNextIterator(it)).null?)
-        yield Header.new(header)
-      end
-      RPM::FFI.rpmdbFreeIterator(it)
+    #
+    # @yield [Package] Called for each match
+    # @param [Number] key RPM tag key
+    # @param [String] val Value to match
+    # @example
+    #   RPM.transaction do |t|
+    #     t.each_match(RPM::TAG_ARCH, "x86_64") do |pkg|
+    #       puts pkg.name
+    #     end
+    #   end
+    #
+    def each_match(key, val, &block)
+      it = init_iterator(key, val)
+
+      return it unless block_given?
+
+      it.each(&block)
+    end
+
+    def each(&block)
+      each_match(0, 0, &block)
     end
 
     # Add a install operation to the transaction
@@ -35,28 +60,28 @@ module RPM
       raise ArgError, "key must be unique" if @keys.include?(key)
       @keys << key
       
-      RPM::FFI.rpmtsAddInstallElement(@ts, pkg.ptr, key.to_s, 0, nil)
+      RPM::FFI.rpmtsAddInstallElement(@ptr, pkg.ptr, key.to_s, 0, nil)
       nil
     end
 
     # Sets the root directory for this transaction
     # @param [String] root directory
     def root_dir=(dir)
-      rc = RPM::FFI.rpmtsSetRootDir(@ts, dir)
+      rc = RPM::FFI.rpmtsSetRootDir(@ptr, dir)
       raise "Can't set #{dir} as root directory" if rc < 0
     end
 
-    # @returns [String ] the root directory for this transaction
+    # @return [String ] the root directory for this transaction
     def root_dir
-      RPM::FFI.rpmtsRootDir(@ts)
+      RPM::FFI.rpmtsRootDir(@ptr)
     end
 
     def flags=(fl)
-      RPM::FFI.rpmtsSetFlags(@ts, fl)
+      RPM::FFI.rpmtsSetFlags(@ptr, fl)
     end
 
     def flags
-      RPM::FFI.rpmtsFlags(@ts)
+      RPM::FFI.rpmtsFlags(@ptr)
     end
 
     # Performs the transaction.
@@ -69,12 +94,12 @@ module RPM
     def commit
       flags = RPM::FFI::TransFlags[:none]
 
-      rc = RPM::FFI.rpmtsRun(@ts, nil, :none)
+      rc = RPM::FFI.rpmtsRun(@ptr, nil, :none)
 
       raise "Transaction Error" if rc < 0
       
       if rc > 0
-        ps = RPM::FFI.rpmtsProblems(@ts)
+        ps = RPM::FFI.rpmtsProblems(@ptr)
         psi = RPM::FFI.rpmpsInitIterator(ps)
         while (RPM::FFI.rpmpsNextIterator(psi) >= 0)
           problem = RPM::FFI.rpmpsGetProblem(psi)
@@ -83,7 +108,6 @@ module RPM
         RPM::FFI.rpmpsFree(ps)
       end
     end
-
 
   end
 

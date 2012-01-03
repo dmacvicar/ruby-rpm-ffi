@@ -1,7 +1,9 @@
 
 require 'rpm/ffi'
 require 'rpm/package'
+require 'rpm/db'
 require 'rpm/transaction'
+require 'rpm/match_iterator'
 require 'rpm/version'
 require 'rpm/dependency'
 require 'rpm/utils'
@@ -16,7 +18,6 @@ module RPM
      attach_function :malloc, [:size_t], :pointer
   end
 
-
   TAG = RPM::FFI::Tag
   LOG = RPM::FFI::Log
   SENSE = RPM::FFI::Sense
@@ -24,9 +25,22 @@ module RPM
   FILE_STATE = RPM::FFI::FileState
   TRANS_FLAG = RPM::FFI::TransFlags
   PROB_FILTER = RPM::FFI::ProbFilter
+  MIRE = RPM::FFI::RegexpMode
   
-  def self.transaction
-    yield Transaction.new
+  # Creates a new transaction and pass it
+  # to the given block
+  #
+  # @param [String] root dir, default '/'
+  #
+  # @example
+  #   RPM.transaction do |ts|
+  #      ...
+  #   end
+  #
+  def self.transaction(root = '/')
+    ts = Transaction.new
+    ts.root_dir = root
+    yield ts
   end
 
 

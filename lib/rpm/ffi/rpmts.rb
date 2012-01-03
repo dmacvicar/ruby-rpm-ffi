@@ -46,7 +46,7 @@ module RPM
     attach_function 'rpmtsSetDBMode', [:rpmts, :int], :int
     attach_function 'rpmtsRebuildDB', [:rpmts], :int
     attach_function 'rpmtsVerifyDB', [:rpmts], :int
-    attach_function 'rpmtsInitIterator', [:rpmts, :rpmDbiTagVal, :pointer, :int], :pointer
+    attach_function 'rpmtsInitIterator', [:rpmts, :rpmDbiTagVal, :pointer, :int], :rpmdbMatchIterator
     # ...
     attach_function 'rpmtsProblems', [:rpmts], :rpmps
     # more...
@@ -55,6 +55,8 @@ module RPM
     attach_function 'rpmtsRootDir', [:rpmts], :string
     attach_function 'rpmtsSetRootDir', [:rpmts, :string], :int
     #...
+    attach_function 'rpmtsGetRdb', [:rpmts], :rpmdb
+    # ..
     attach_function 'rpmtsFlags', [:rpmts], :rpmtransFlags
     attach_function 'rpmtsSetFlags', [:rpmts, :rpmtransFlags], :rpmtransFlags
     #...

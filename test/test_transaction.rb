@@ -11,6 +11,33 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
     end
   end
 
+  def test_iterator
+    RPM.transaction do |t|
+      it = t.init_iterator(nil, nil)
+      assert_kind_of RPM::MatchIterator, it
+      #assert it.count > 0
+    end
+
+    RPM.transaction do |t|
+      it = t.init_iterator(nil, nil)
+      it.regexp(:name, :glob, '*audio*')
+      it.each do |pkg| 
+        assert pkg.name.include?("audio"), "'#{pkg.name}' contains 'audio'"
+      end
+    end
+  end
+
+  # FIXME this is not working
+  def test_iterator_version
+    RPM.transaction do |t|
+      it = t.init_iterator(nil, nil)
+      it.version(RPM::Version.new('2.1'))
+      it.each do |pkg| 
+        puts pkg
+      end
+    end
+  end 
+
   def test_install
     
     filename = 'simple-1.0-0.i586.rpm'

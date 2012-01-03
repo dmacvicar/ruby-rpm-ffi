@@ -254,7 +254,7 @@ module RPM
       :firstfree_tag ]
     )
 
-    Dbi = enum(:rpmDbiTag, [
+    Dbi = enum(:rpmDbiTag_e, [
       :packages, 0,
       :label, 2,
       :name, Tag[:name],
