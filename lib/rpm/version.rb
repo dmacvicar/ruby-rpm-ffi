@@ -55,13 +55,14 @@ module RPM
           # (vr, e)
           RPM::Utils.check_type(argv[0], String)
           @e, @v, @r = RPM::Version.parse_evr(argv[0])
-          @e = argv[1] ? argv[1].to_i : nil
+          raise(TypeError, "illegal argument value") if not e.nil?
+          @e = argv[1].to_i
         when 3
           RPM::Utils.check_type(argv[0], String)
           RPM::Utils.check_type(argv[1], String)
           @v = argv[0]
           @r = argv[1]
-          @e = argv[2] ? argv[2].to_i : nil
+          @e = argv[2].to_i
         else
           raise(ArgumentError "too many arguments (#{args.size} for 1..3)")
       end
