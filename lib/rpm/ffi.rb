@@ -18,6 +18,7 @@ module RPM
 end
 
 require 'rpm/ffi/rpmtypes'
+require 'rpm/ffi/rpmcallback'
 require 'rpm/ffi/rpmtag'
 require 'rpm/ffi/rpmlib'
 require 'rpm/ffi/rpmlog'
