@@ -50,6 +50,10 @@ class RPM_Header_Tests < Test::Unit::TestCase
     assert pkg.files.map(&:path).include?("/usr/share/simple/README")
     assert pkg.files.map(&:path).include?("/usr/share/simple/README.es")
 
+    file = pkg.files.select {|x| x.path == "/usr/share/simple/README" }.first
+    assert_nil file.link_to
+    assert !file.symlink?
+
     assert_equal ["- Fix something", "- Fix something else"], pkg.changelog.map(&:text)
   end
 

@@ -73,8 +73,8 @@ module RPM
     #     puts pkg.name
     #   end
     #
-    def self.open(writable=false, root='/')
-      open_for_transaction(Transaction.new(:root => root), :writable => false)
+    def self.open(writable=false, root='/', &block)
+      open_for_transaction(Transaction.new(:root => root), :writable => false, &block)
     end
 
     # @visibility private

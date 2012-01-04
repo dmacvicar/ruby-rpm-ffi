@@ -25,6 +25,7 @@ module RPM
 
     attr_accessor :attr
     attr_accessor :state
+    attr_accessor :rdev
 
     # @return [Boolean] True if the file is a symbolic link
     def symlink?
@@ -113,7 +114,8 @@ module RPM
     def initialize(path, md5sum, link_to, size, mtime, owner, group, rdev, mode, attr, state)
       @path = path
       @md5sum = md5sum
-      @link_to = link_to
+      # If link_to is "" save it as nil
+      @link_to = ((link_to && link_to.empty?) ? nil : link_to)
       @size = size
       @mtime = mtime
       @owner = owner

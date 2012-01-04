@@ -117,10 +117,12 @@ module RPM
       grouplist = self[:filegroupname]
 
       ret = []
+
       basenames.each_with_index do |basename, i|
+
         file = RPM::File.new("#{dirnames[diridxs[i]]}#{basenames[i]}",
                 md5list[i],
-                linklist.nil? ? nil : linklist[i],
+                linklist[i],
                 sizelist[i],
                 mtimelist[i],
                 ownerlist[i],
@@ -224,7 +226,7 @@ module RPM
 
       return nil if (RPM::FFI.headerGet(ptr, tag, tagc, 
                       RPM::FFI::HEADERGET_MINMEM) == 0)
-      
+
       type = RPM::FFI.rpmtdType(tagc)
       count = RPM::FFI.rpmtdCount(tagc)
       ret_type = RPM::FFI.rpmTagGetReturnType(tag)

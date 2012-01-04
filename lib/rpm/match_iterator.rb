@@ -43,6 +43,7 @@ module RPM
     def set_iterator_re(tag, mode, string)
       ret = RPM::FFI.rpmdbSetIteratorRE(@ptr, tag, mode, string)
       raise "Error when setting regular expression '#{string}'" if ret != 0
+      self
     end
 
     alias :regexp :set_iterator_re
