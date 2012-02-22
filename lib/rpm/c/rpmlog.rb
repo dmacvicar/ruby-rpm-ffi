@@ -1,7 +1,7 @@
 
 module RPM
 
-  module FFI
+  module C
 
      # rpmlog
     RPMLOG_PRIMASK = 0x07

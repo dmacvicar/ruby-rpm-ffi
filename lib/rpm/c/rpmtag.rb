@@ -1,6 +1,6 @@
 module RPM
 
-  module FFI
+  module C
 
     Tag = enum(:rpmTag, [
       :not_found, -1,

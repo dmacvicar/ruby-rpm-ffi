@@ -98,7 +98,7 @@ module RPM
     #
     def <=>(other)
       RPM::Utils.check_type(other, RPM::Version)
-      ret = RPM::FFI.rpmvercmp(to_vre_epoch_zero, other.to_vre_epoch_zero)
+      ret = RPM::C.rpmvercmp(to_vre_epoch_zero, other.to_vre_epoch_zero)
     end
 
     # @param [Version] other Version to compare against

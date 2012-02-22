@@ -7,7 +7,7 @@ module RPM
 
     # @visibility private
     def self.release(ptr)
-      RPM::FFI.rpmdbFreeIterator(ptr)
+      RPM::C.rpmdbFreeIterator(ptr)
     end
 
     # Creates a managed MatchIterator from a raw pointer
@@ -27,7 +27,7 @@ module RPM
     end
 
     def next_iterator
-      pkg_ptr = RPM::FFI.rpmdbNextIterator(@ptr)
+      pkg_ptr = RPM::C.rpmdbNextIterator(@ptr)
         if !pkg_ptr.null?
           return RPM::Package.new(pkg_ptr)
         end
@@ -37,11 +37,11 @@ module RPM
     # @ return header join key for current position of rpm 
     # database iterator
     def offset
-      RPM::FFI.rpmdbGetIteratorOffset(@ptr)
+      RPM::C.rpmdbGetIteratorOffset(@ptr)
     end
 
     def set_iterator_re(tag, mode, string)
-      ret = RPM::FFI.rpmdbSetIteratorRE(@ptr, tag, mode, string)
+      ret = RPM::C.rpmdbSetIteratorRE(@ptr, tag, mode, string)
       raise "Error when setting regular expression '#{string}'" if ret != 0
       self
     end
@@ -63,7 +63,7 @@ module RPM
     alias :version :set_iterator_version
     
     def get_iterator_count
-      RPM::FFI.rpmdbGetIteratorCount(@ptr)
+      RPM::C.rpmdbGetIteratorCount(@ptr)
     end
 
     alias :count :get_iterator_count

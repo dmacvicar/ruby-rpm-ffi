@@ -37,16 +37,16 @@ module RPM
           end
           return false
         when RPM::Dependency then
-          RPM::FFI.rpmdsCompare(
-            RPM::FFI.rpmdsSingle(:providename, other.name,
+          RPM::C.rpmdsCompare(
+            RPM::C.rpmdsSingle(:providename, other.name,
               other.version.to_vre, other.flags),
-            RPM::FFI.rpmdsSingle(:providename, name,
+            RPM::C.rpmdsSingle(:providename, name,
               version.to_vre, flags)) != 0
         when RPM::Version then
-          RPM::FFI.rpmdsCompare(
-            RPM::FFI.rpmdsSingle(:providename, name,
+          RPM::C.rpmdsCompare(
+            RPM::C.rpmdsSingle(:providename, name,
               other.to_vre, other.to_vre.empty? ? 0 : :equal),
-            RPM::FFI.rpmdsSingle(:providename, name,
+            RPM::C.rpmdsSingle(:providename, name,
               version.to_vre, flags)) != 0
         else
           raise(TypeError, "#{other} is not a Version or Dependency")

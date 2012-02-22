@@ -12,7 +12,7 @@ module RPM
       opts[:writable] ||= false
 
       @ts = ts
-      RPM::FFI.rpmtsOpenDB(@ts.ptr, opts[:writable] ? Fcntl::O_RDWR | Fcntl::O_CREAT : Fcntl::O_RDONLY )
+      RPM::C.rpmtsOpenDB(@ts.ptr, opts[:writable] ? Fcntl::O_RDWR | Fcntl::O_CREAT : Fcntl::O_RDONLY )
     end
 
     # @return [RPM::MatchIterator] Creates an iterator for +tag+ and +val+
@@ -48,11 +48,11 @@ module RPM
 
     # @visibility private
     def ptr
-      RPM::FFI.rpmtsGetRdb(@ts.ptr)
+      RPM::C.rpmtsGetRdb(@ts.ptr)
     end
 
     def close
-      RPM::FFI.rpmtsCloseDB(@ts.ptr)
+      RPM::C.rpmtsCloseDB(@ts.ptr)
     end
 
     def closed?
@@ -98,13 +98,13 @@ module RPM
 
     # @return [String] The root path of the database
     def root
-      RPM::FFI.rpmtsRootDir(@ts.ptr)
+      RPM::C.rpmtsRootDir(@ts.ptr)
     end
 
     # @deprecated Use RPM::Transaction#each
     def self.each
       DB.open do |db|
-        it = MatchIterator.from_ptr(RPM::FFI.rpmdbInitIterator(db.ptr, 0, nil, 0))
+        it = MatchIterator.from_ptr(RPM::C.rpmdbInitIterator(db.ptr, 0, nil, 0))
         if block_given?
           it.each do |pkg|
             yield pkg

@@ -1,5 +1,5 @@
 
-require 'rpm/ffi'
+require 'rpm/c'
 require 'rpm/package'
 require 'rpm/db'
 require 'rpm/transaction'
@@ -18,14 +18,14 @@ module RPM
      attach_function :malloc, [:size_t], :pointer
   end
 
-  TAG = RPM::FFI::Tag
-  LOG = RPM::FFI::Log
-  SENSE = RPM::FFI::Sense
-  FILE = RPM::FFI::FileAttrs
-  FILE_STATE = RPM::FFI::FileState
-  TRANS_FLAG = RPM::FFI::TransFlags
-  PROB_FILTER = RPM::FFI::ProbFilter
-  MIRE = RPM::FFI::RegexpMode
+  TAG = RPM::C::Tag
+  LOG = RPM::C::Log
+  SENSE = RPM::C::Sense
+  FILE = RPM::C::FileAttrs
+  FILE_STATE = RPM::C::FileState
+  TRANS_FLAG = RPM::C::TransFlags
+  PROB_FILTER = RPM::C::ProbFilter
+  MIRE = RPM::C::RegexpMode
   
   # Creates a new transaction and pass it
   # to the given block
@@ -50,7 +50,7 @@ module RPM
     val = String.new
     buffer = ::FFI::MemoryPointer.new(:pointer, 1024)
     buffer.write_string("%{#{name}}")
-    ret = RPM::FFI.expandMacros(nil, nil, buffer, 1024)
+    ret = RPM::C.expandMacros(nil, nil, buffer, 1024)
     buffer.read_string
   end
 
@@ -59,16 +59,16 @@ module RPM
   # @param [String] value Value of the macro or +nil+ to delete it
   def self.[]=(name, value)
     if value.nil?
-      RPM::FFI.delMacro(nil, name.to_s)
+      RPM::C.delMacro(nil, name.to_s)
     else
-      RPM::FFI.addMacro(nil, name.to_s, nil, value.to_s, RPM::FFI::RMIL_DEFAULT)
+      RPM::C.addMacro(nil, name.to_s, nil, value.to_s, RPM::C::RMIL_DEFAULT)
     end
   end
 
 end
  
-RPM::FFI.rpmReadConfigFiles(nil, nil)
-RPM::FFI.rpmInitMacros(nil, RPM::FFI.MACROFILES)
+RPM::C.rpmReadConfigFiles(nil, nil)
+RPM::C.rpmInitMacros(nil, RPM::C.MACROFILES)
 
 # TODO
 # set verbosity

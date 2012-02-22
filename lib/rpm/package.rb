@@ -1,4 +1,4 @@
-require 'rpm/ffi'
+require 'rpm/c'
 require 'rpm/file'
 
 module RPM
@@ -23,15 +23,15 @@ module RPM
       if not version.is_a?(RPM::Version)
         raise TypeError, "illegal argument type: version should be RPM::Version"
       end
-      hdr = RPM::FFI.headerNew
-      if RPM::FFI.headerPutString(hdr, :name, name) != 1
+      hdr = RPM::C.headerNew
+      if RPM::C.headerPutString(hdr, :name, name) != 1
         raise "Can't set package name: #{name}"
       end
-      if RPM::FFI.headerPutString(hdr, :version, version.v) != 1
+      if RPM::C.headerPutString(hdr, :version, version.v) != 1
         raise "Can't set package version: #{version.v}"
       end
       if version.e
-        if RPM::FFI.headerPutUint32(hdr, :epoch, version.e) != 1
+        if RPM::C.headerPutUint32(hdr, :epoch, version.e) != 1
           raise "Can't set package epoch: #{version.e}"
         end
       end
@@ -87,7 +87,7 @@ module RPM
     #   pkg.sprintf("%{name}") => "apache2"
     def sprintf(fmt)
       error = ::FFI::MemoryPointer.new(:pointer, 1)
-      val = RPM::FFI.headerFormat(@hdr, fmt, error)
+      val = RPM::C.headerFormat(@hdr, fmt, error)
       raise error.get_pointer(0).read_string if val.null?
       val.read_string
     end
@@ -129,8 +129,8 @@ module RPM
                 grouplist[i],
                 rdevlist[i],
                 modelist[i],
-                flaglist.nil? ? RPM::FFI::FileAttrs[:none] : flaglist[i],
-                statelist.nil? ? RPM::FFI::FileState[:normal] : statelist[i]
+                flaglist.nil? ? RPM::C::FileAttrs[:none] : flaglist[i],
+                statelist.nil? ? RPM::C::FileState[:normal] : statelist[i]
         )
         ret << file
       end
@@ -145,20 +145,20 @@ module RPM
     def dependencies(klass, nametag, versiontag, flagtag)
       deps = []
 
-      nametd = ::FFI::AutoPointer.new(RPM::FFI.rpmtdNew, Package.method(:release_td))
-      versiontd = ::FFI::AutoPointer.new(RPM::FFI.rpmtdNew, Package.method(:release_td))
-      flagtd = ::FFI::AutoPointer.new(RPM::FFI.rpmtdNew, Package.method(:release_td))
+      nametd = ::FFI::AutoPointer.new(RPM::C.rpmtdNew, Package.method(:release_td))
+      versiontd = ::FFI::AutoPointer.new(RPM::C.rpmtdNew, Package.method(:release_td))
+      flagtd = ::FFI::AutoPointer.new(RPM::C.rpmtdNew, Package.method(:release_td))
 
-      min = RPM::FFI::HEADERGET_MINMEM
-      return deps if (RPM::FFI.headerGet(@hdr, nametag, nametd, min) != 1)
-      return deps if (RPM::FFI.headerGet(@hdr, versiontag, versiontd, min) != 1)
-      return deps if (RPM::FFI.headerGet(@hdr, flagtag, flagtd, min) != 1)
+      min = RPM::C::HEADERGET_MINMEM
+      return deps if (RPM::C.headerGet(@hdr, nametag, nametd, min) != 1)
+      return deps if (RPM::C.headerGet(@hdr, versiontag, versiontd, min) != 1)
+      return deps if (RPM::C.headerGet(@hdr, flagtag, flagtd, min) != 1)
 
-      RPM::FFI.rpmtdInit(nametd)
-      while RPM::FFI.rpmtdNext(nametd) != -1
-        deps << klass.new(RPM::FFI.rpmtdGetString(nametd),
-                  RPM::Version.new(RPM::FFI.rpmtdNextString(versiontd)),
-                  RPM::FFI.rpmtdNextUint32(flagtd).read_uint, self)
+      RPM::C.rpmtdInit(nametd)
+      while RPM::C.rpmtdNext(nametd) != -1
+        deps << klass.new(RPM::C.rpmtdGetString(nametd),
+                  RPM::Version.new(RPM::C.rpmtdNextString(versiontd)),
+                  RPM::C.rpmtdNextUint32(flagtd).read_uint, self)
       end
       deps
     end
@@ -186,21 +186,21 @@ module RPM
     # @return [Array<RPM::Changelog>] changelog of the package as an array 
     def changelog
       entries = []
-      nametd = ::FFI::AutoPointer.new(RPM::FFI.rpmtdNew, Package.method(:release_td))
-      timetd = ::FFI::AutoPointer.new(RPM::FFI.rpmtdNew, Package.method(:release_td))
-      texttd = ::FFI::AutoPointer.new(RPM::FFI.rpmtdNew, Package.method(:release_td))
+      nametd = ::FFI::AutoPointer.new(RPM::C.rpmtdNew, Package.method(:release_td))
+      timetd = ::FFI::AutoPointer.new(RPM::C.rpmtdNew, Package.method(:release_td))
+      texttd = ::FFI::AutoPointer.new(RPM::C.rpmtdNew, Package.method(:release_td))
     
-      min = RPM::FFI::HEADERGET_MINMEM
-      return deps if (RPM::FFI.headerGet(@hdr, :changelogtime, timetd, min) != 1)
-      return deps if (RPM::FFI.headerGet(@hdr, :changelogname, nametd, min) != 1)
-      return deps if (RPM::FFI.headerGet(@hdr, :changelogtext, texttd, min) != 1)
+      min = RPM::C::HEADERGET_MINMEM
+      return deps if (RPM::C.headerGet(@hdr, :changelogtime, timetd, min) != 1)
+      return deps if (RPM::C.headerGet(@hdr, :changelogname, nametd, min) != 1)
+      return deps if (RPM::C.headerGet(@hdr, :changelogtext, texttd, min) != 1)
 
-      RPM::FFI.rpmtdInit(timetd)
-      while RPM::FFI.rpmtdNext(timetd) != -1
+      RPM::C.rpmtdInit(timetd)
+      while RPM::C.rpmtdNext(timetd) != -1
         entry = RPM::ChangeLog.new
-        entry.time = RPM::FFI.rpmtdGetUint32(timetd)
-        entry.name = RPM::FFI.rpmtdNextString(nametd)
-        entry.text = RPM::FFI.rpmtdNextString(texttd)
+        entry.time = RPM::C.rpmtdGetUint32(timetd)
+        entry.name = RPM::C.rpmtdNextString(nametd)
+        entry.text = RPM::C.rpmtdNextString(texttd)
         entries << entry
       end
       entries
@@ -222,14 +222,14 @@ module RPM
     #   The value of the entry
     def [](tag)
       val = nil
-      tagc = ::FFI::AutoPointer.new(RPM::FFI.rpmtdNew, Package.method(:release_td))
+      tagc = ::FFI::AutoPointer.new(RPM::C.rpmtdNew, Package.method(:release_td))
 
-      return nil if (RPM::FFI.headerGet(ptr, tag, tagc, 
-                      RPM::FFI::HEADERGET_MINMEM) == 0)
+      return nil if (RPM::C.headerGet(ptr, tag, tagc, 
+                      RPM::C::HEADERGET_MINMEM) == 0)
 
-      type = RPM::FFI.rpmtdType(tagc)
-      count = RPM::FFI.rpmtdCount(tagc)
-      ret_type = RPM::FFI.rpmTagGetReturnType(tag)
+      type = RPM::C.rpmtdType(tagc)
+      count = RPM::C.rpmtdCount(tagc)
+      ret_type = RPM::C.rpmTagGetReturnType(tag)
 
       method_name = case type
         when :int8_type, :char_type, :int16_type, :int32_type, :int64_type then :rpmtdGetNumber
@@ -246,14 +246,14 @@ module RPM
 
       if is_array
         ret = []
-        RPM::FFI.rpmtdInit(tagc)
-        while RPM::FFI.rpmtdNext(tagc) != -1
-          ret << RPM::FFI.send(method_name, tagc)
+        RPM::C.rpmtdInit(tagc)
+        while RPM::C.rpmtdNext(tagc) != -1
+          ret << RPM::C.send(method_name, tagc)
         end
         return ret
       end
       
-      return RPM::FFI.send(method_name, tagc)
+      return RPM::C.send(method_name, tagc)
     end
 
     # @return [String] This package name
@@ -273,7 +273,7 @@ module RPM
       v_ptr = ::FFI::MemoryPointer.new(:pointer, 1)
       r_ptr = ::FFI::MemoryPointer.new(:pointer, 1)
 
-      RPM::FFI.headerNVR(ptr, nil, v_ptr, r_ptr)
+      RPM::C.headerNVR(ptr, nil, v_ptr, r_ptr)
       v = v_ptr.read_pointer.read_string
       r = r_ptr.read_pointer.read_string
       v_ptr.free
@@ -295,43 +295,43 @@ module RPM
       hdr = ::FFI::MemoryPointer.new(:pointer)
       fd = nil
       begin
-        fd = RPM::FFI.Fopen(filename, 'r')
-        if RPM::FFI.Ferror(fd) != 0
-          raise "#{filename} : #{RPM::FFI.Fstrerror(fd)}"
+        fd = RPM::C.Fopen(filename, 'r')
+        if RPM::C.Ferror(fd) != 0
+          raise "#{filename} : #{RPM::C.Fstrerror(fd)}"
         end
         RPM.transaction do |ts|
-          rc = RPM::FFI.rpmReadPackageFile(ts.ptr, fd, filename, hdr)
+          rc = RPM::C.rpmReadPackageFile(ts.ptr, fd, filename, hdr)
         end
       ensure
-        RPM::FFI.Fclose(fd) unless fd.nil?
+        RPM::C.Fclose(fd) unless fd.nil?
       end
       Package.new(hdr.get_pointer(0))
     end
 
     # @visibility private
     def self.release(ptr)
-      RPM::FFI.headerFree(ptr)
+      RPM::C.headerFree(ptr)
     end
 
     # @visibility private
     def self.release_td(ptr)
-      RPM::FFI.rpmtdFree(ptr)
+      RPM::C.rpmtdFree(ptr)
     end
 
     # @visibility private
     def initialize(hdr=nil)
       if hdr.nil?
-        @hdr = ::FFI::AutoPointer.new(RPM::FFI.headerNew, Header.method(:release))
+        @hdr = ::FFI::AutoPointer.new(RPM::C.headerNew, Header.method(:release))
       elsif hdr.is_a?(::FFI::Pointer)
         # ref
-        hdr = RPM::FFI.headerLink(hdr)
+        hdr = RPM::C.headerLink(hdr)
         @hdr = ::FFI::AutoPointer.new(hdr, Package.method(:release))
       else
         raise "Can't initialize header with '#{hdr}'"
       end
     end
 
-    # @return [RPM::FFI::Header] header pointer
+    # @return [RPM::C::Header] header pointer
     # @visibility private
     def ptr
       @hdr

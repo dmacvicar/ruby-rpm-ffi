@@ -1,7 +1,7 @@
 
 module RPM
 
-  module FFI
+  module C
     
     attach_variable :RPMVERSION, :RPMVERSION, :string
     attach_variable :RPMEVR, :rpmEVR, :string

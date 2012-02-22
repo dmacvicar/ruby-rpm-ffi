@@ -1,6 +1,6 @@
 
 module RPM
-  module FFI
+  module C
 
     CallbackType = enum(:rpmCallbackType, [
       :unknown,         0,

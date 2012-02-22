@@ -1,6 +1,6 @@
 module RPM
 
-  module FFI
+  module C
 
     typedef :pointer, :rpmdb
     typedef :pointer, :rpmdbMatchIterator

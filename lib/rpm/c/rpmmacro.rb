@@ -1,7 +1,7 @@
 
 module RPM
 
-  module FFI
+  module C
 
     attach_variable :MACROFILES, :macrofiles, :string
     # ...

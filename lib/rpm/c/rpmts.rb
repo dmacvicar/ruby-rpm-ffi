@@ -1,6 +1,6 @@
 module RPM
 
-  module FFI
+  module C
 
     TransFlags = enum(:rpmtransFlags_e, [
       :none, 0,

@@ -1,7 +1,7 @@
  
 module RPM
 
-  module FFI
+  module C
 
     typedef :pointer, :rpmProblem
 

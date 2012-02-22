@@ -13,22 +13,22 @@ module RPM
   class Transaction
 
     def self.release(ptr)
-      RPM::FFI.rpmtsFree(ptr)
+      RPM::C.rpmtsFree(ptr)
     end
 
     def initialize(opts={})
 
       opts[:root] ||= '/'
 
-      @ptr = ::FFI::AutoPointer.new(RPM::FFI.rpmtsCreate, Transaction.method(:release))
-      RPM::FFI.rpmtsSetRootDir(@ptr, opts[:root])
+      @ptr = ::FFI::AutoPointer.new(RPM::C.rpmtsCreate, Transaction.method(:release))
+      RPM::C.rpmtsSetRootDir(@ptr, opts[:root])
     end
 
     # @return [RPM::MatchIterator] Creates an iterator for +tag+ and +val+
     def init_iterator(tag, val)
       raise TypeError if (val && !val.is_a?(String))
       
-      it_ptr = RPM::FFI.rpmtsInitIterator(@ptr, tag.nil? ? 0 : tag, val, 0)
+      it_ptr = RPM::C.rpmtsInitIterator(@ptr, tag.nil? ? 0 : tag, val, 0)
       
       raise "Can't init iterator for [#{tag}] -> '#{val}'" if it_ptr.null?
       return MatchIterator.from_ptr(it_ptr)
@@ -78,7 +78,7 @@ module RPM
       raise ArgError, "key must be unique" if @keys.include?(key)
       @keys << key
       
-      ret = RPM::FFI.rpmtsAddInstallElement(@ptr, pkg.ptr, key.to_s, 0, nil)
+      ret = RPM::C.rpmtsAddInstallElement(@ptr, pkg.ptr, key.to_s, 0, nil)
       raise RuntimeError if ret != 0
       nil
     end
@@ -86,21 +86,21 @@ module RPM
     # Sets the root directory for this transaction
     # @param [String] root directory
     def root_dir=(dir)
-      rc = RPM::FFI.rpmtsSetRootDir(@ptr, dir)
+      rc = RPM::C.rpmtsSetRootDir(@ptr, dir)
       raise "Can't set #{dir} as root directory" if rc < 0
     end
 
     # @return [String ] the root directory for this transaction
     def root_dir
-      RPM::FFI.rpmtsRootDir(@ptr)
+      RPM::C.rpmtsRootDir(@ptr)
     end
 
     def flags=(fl)
-      RPM::FFI.rpmtsSetFlags(@ptr, fl)
+      RPM::C.rpmtsSetFlags(@ptr, fl)
     end
 
     def flags
-      RPM::FFI.rpmtsFlags(@ptr)
+      RPM::C.rpmtsFlags(@ptr)
     end
 
     # Performs the transaction.
@@ -116,7 +116,7 @@ module RPM
     # @yield [CallbackData] sig Transaction progress
 
     def commit(&user_callback)
-      flags = RPM::FFI::TransFlags[:none]
+      flags = RPM::C::TransFlags[:none]
 
       # We create a callback to pass to the C method and we
       # call the user supplied callback from there
@@ -138,7 +138,7 @@ module RPM
           ret = user_callback.call(data)
         else
           # No custom callback given, use the default to show progress
-          ret = RPM::FFI.rpmShowProgress(hdr, type, amount, total, key, data_ignored)
+          ret = RPM::C.rpmShowProgress(hdr, type, amount, total, key, data_ignored)
           next ret
         end
 
@@ -150,39 +150,39 @@ module RPM
             raise TypeError, "illegal return value type #{ret.class}. Expected File." 
           end
 
-          fdt = RPM::FFI.fdDup(ret.to_i)
-          if (fdt.null? || RPM::FFI.Ferror(fdt) != 0)
-            raise RuntimeError, "Can't open #{data.key}: #{RPM::FFI.Fstrerror(fdt)}"
-            RPM::FFI.Fclose(fdt) if not fdt.nil?
+          fdt = RPM::C.fdDup(ret.to_i)
+          if (fdt.null? || RPM::C.Ferror(fdt) != 0)
+            raise RuntimeError, "Can't open #{data.key}: #{RPM::C.Fstrerror(fdt)}"
+            RPM::C.Fclose(fdt) if not fdt.nil?
           else
-            fdt = RPM::FFI.fdLink(fdt)
+            fdt = RPM::C.fdLink(fdt)
             @fdt = fdt
           end
           # return the file handle
           next fdt
         when :inst_close_file
           fdt = @fdt
-          RPM::FFI.Fclose(fdt)
+          RPM::C.Fclose(fdt)
           @fdt = nil
         end
         nil
       end
 
-      ret = RPM::FFI.rpmtsSetNotifyCallback(@ptr, callback, nil)
+      ret = RPM::C.rpmtsSetNotifyCallback(@ptr, callback, nil)
       raise "Can't set commit callback" if ret != 0
       
-      rc = RPM::FFI.rpmtsRun(@ptr, nil, :none)
+      rc = RPM::C.rpmtsRun(@ptr, nil, :none)
 
       raise "Transaction Error" if rc < 0
       
       if rc > 0
-        ps = RPM::FFI.rpmtsProblems(@ptr)
-        psi = RPM::FFI.rpmpsInitIterator(ps)
-        while (RPM::FFI.rpmpsNextIterator(psi) >= 0)
-          problem = RPM::FFI.rpmpsGetProblem(psi)
-          puts RPM::FFI.rpmProblemString.read_string
+        ps = RPM::C.rpmtsProblems(@ptr)
+        psi = RPM::C.rpmpsInitIterator(ps)
+        while (RPM::C.rpmpsNextIterator(psi) >= 0)
+          problem = RPM::C.rpmpsGetProblem(psi)
+          puts RPM::C.rpmProblemString.read_string
         end
-        RPM::FFI.rpmpsFree(ps)
+        RPM::C.rpmpsFree(ps)
       end
     end
 

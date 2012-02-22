@@ -65,7 +65,7 @@ from 1130 lines of code to 320.
 
 The gem is divided in two modules:
 
-* RPM::FFI:: which contains the 1:1 mapping to the librpm API
+* RPM::C:: which contains the 1:1 mapping to the librpm API
   Not all functions are attached, only the ones we actually use.
 * RPM:: contains the actual higher level API
 

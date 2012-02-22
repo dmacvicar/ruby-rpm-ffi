@@ -1,7 +1,7 @@
 
 module RPM
 
-  module FFI
+  module C
 
     FileAttrs = enum(:rpmfileAttrs, [
       :none, 0,
