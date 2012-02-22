@@ -18,6 +18,8 @@ module RPM
     typedef :rpm_tag_t, :rpmDbiTagVal
 
     typedef :uint32, :rpmFlags
+    typedef :uint32, :rpm_off_t
+    typedef :uint64, :rpm_loff_t
 
     typedef :pointer, :FD_t
     typedef :pointer, :fnpyKey

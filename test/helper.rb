@@ -3,5 +3,5 @@ require 'test/unit'
 require 'rpm'
 
 def fixture(name)
-  File.join(File.dirname(__FILE__), 'data', name)
+  File.expand_path(File.join(File.dirname(__FILE__), 'data', name))
 end

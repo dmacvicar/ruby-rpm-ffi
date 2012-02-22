@@ -2,6 +2,14 @@ require 'rpm'
 
 module RPM
 
+  class CallbackData
+    attr_accessor :type, :key, :package, :amount, :total
+
+    def to_s
+      "#{type} #{key} #{package} #{amount} #{total}"
+    end
+  end
+
   class Transaction
 
     def self.release(ptr)
@@ -70,7 +78,8 @@ module RPM
       raise ArgError, "key must be unique" if @keys.include?(key)
       @keys << key
       
-      RPM::FFI.rpmtsAddInstallElement(@ptr, pkg.ptr, key.to_s, 0, nil)
+      ret = RPM::FFI.rpmtsAddInstallElement(@ptr, pkg.ptr, key.to_s, 0, nil)
+      raise RuntimeError if ret != 0
       nil
     end
 
@@ -98,18 +107,70 @@ module RPM
     # @param [Number] flag Transaction flags, default +RPM::TRANS_FLAG_NONE+
     # @param [Number] filter Transaction filter, default +RPM::PROB_FILTER_NONE+
     # @example
-    #   transaction.commit do |sig|
+    #   transaction.commit
+    # You can supply your own callback
+    # @example
+    #   transaction.commit do |data|
+    #   end
     # end
     # @yield [CallbackData] sig Transaction progress
-    def commit
-      self.flags = RPM::FFI::TransFlags[:none]
 
-      callback = Proc.new do |h, what, amount, total, key, data|
-        puts "#{h} #{what} #{amount} #{total} #{key} #{data}"
+    def commit(&user_callback)
+      flags = RPM::FFI::TransFlags[:none]
+
+      # We create a callback to pass to the C method and we
+      # call the user supplied callback from there
+      #
+      # The C callback expects you to return a file handle,
+      # We expect from the user to get a File, which we
+      # then convert to a file handle to return.
+      callback = Proc.new do |hdr, type, amount, total, key, data_ignored|
+
+        if block_given?
+          
+          data = CallbackData.new
+          
+          data.type = type
+          data.key = key.null? ? nil : key.read_string
+          data.package = hdr.null? ? nil : Package.new(hdr)
+          data.amount = amount
+          data.total = total
+          ret = user_callback.call(data)
+        else
+          # No custom callback given, use the default to show progress
+          ret = RPM::FFI.rpmShowProgress(hdr, type, amount, total, key, data_ignored)
+          next ret
+        end
+
+        case type
+        when :inst_open_file
+          # For :inst_open_file the user callback has to
+          # return the open file
+          if !ret.is_a?(::File)    
+            raise TypeError, "illegal return value type #{ret.class}. Expected File." 
+          end
+
+          fdt = RPM::FFI.fdDup(ret.to_i)
+          if (fdt.null? || RPM::FFI.Ferror(fdt) != 0)
+            raise RuntimeError, "Can't open #{data.key}: #{RPM::FFI.Fstrerror(fdt)}"
+            RPM::FFI.Fclose(fdt) if not fdt.nil?
+          else
+            fdt = RPM::FFI.fdLink(fdt)
+            @fdt = fdt
+          end
+          # return the file handle
+          next fdt
+        when :inst_close_file
+          fdt = @fdt
+          RPM::FFI.Fclose(fdt)
+          @fdt = nil
+        end
+        nil
       end
 
-      RPM::FFI.rpmtsSetNotifyCallback(@ts, callback, nil)
-
+      ret = RPM::FFI.rpmtsSetNotifyCallback(@ptr, callback, nil)
+      raise "Can't set commit callback" if ret != 0
+      
       rc = RPM::FFI.rpmtsRun(@ptr, nil, :none)
 
       raise "Transaction Error" if rc < 0
@@ -123,6 +184,11 @@ module RPM
         end
         RPM::FFI.rpmpsFree(ps)
       end
+    end
+
+    # @return [DB] the database associated with this transaction
+    def db
+      RPM::DB.new(self)
     end
 
   end
