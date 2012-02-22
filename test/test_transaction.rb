@@ -86,7 +86,6 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
         t.install(pkg, fixture(PACKAGE_FILENAME))
         t.commit
         
-        STDERR.puts Dir.glob(File.join(dir, '**/*'))
         assert File.exist?(File.join(dir, '/var/lib/rpm/Packages')),
           "rpm db exists"
 
