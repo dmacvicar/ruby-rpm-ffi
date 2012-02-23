@@ -1,0 +1,7 @@
+language: ruby
+before_install:
+  - sudo apt-get install rpm
+rvm:
+  - 1.9.3
+
+
