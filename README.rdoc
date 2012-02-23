@@ -34,6 +34,16 @@ This is an alpha release! There is still work to be done
       end
     end
 
+== Install a package
+
+    require 'rpm'
+    pkg = RPM::Package.open('foo.rpm')
+
+    RPM.transaction(rootdir) do |t|   
+      t.install(pkg, 'foo.rpm')
+      t.commit
+    end
+
 = Introduction
 
 This library is a replacement for the ruby-rpm gem, originally
