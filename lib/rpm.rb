@@ -2,6 +2,7 @@
 require 'rpm/c'
 require 'rpm/package'
 require 'rpm/db'
+require 'rpm/problem'
 require 'rpm/transaction'
 require 'rpm/match_iterator'
 require 'rpm/version'

@@ -66,7 +66,7 @@ module RPM
     #...
     attach_function 'rpmtsCreate', [], :rpmts
     attach_function 'rpmtsAddInstallElement', [:rpmts, :header, :fnpyKey, :int, :rpmRelocation], :int
-    # ...    
+    attach_function 'rpmtsAddEraseElement', [:rpmts, :header, :int], :int
 
   end
 end

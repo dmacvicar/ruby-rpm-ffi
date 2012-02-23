@@ -77,7 +77,7 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
     end
   end
 
-  def test_install_with_default_callback
+  def test_install_and_remove
     pkg = RPM::Package.open(fixture(PACKAGE_FILENAME))
 
     Dir.mktmpdir do |dir|
@@ -91,6 +91,17 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
 
         assert File.exist?(File.join(dir, '/usr/share/simple/README')),
           "package #{pkg} was installed"
+
+        assert_raise TypeError do
+          t.delete(Object.new)
+        end
+
+        t.delete(pkg)
+        t.commit
+
+        assert !File.exist?(File.join(dir, '/usr/share/simple/README')),
+          "package #{pkg} is not installed"
+
         # Force close so that RPM does not try to do it
         # when the tmpdir is deleted
         t.db.close

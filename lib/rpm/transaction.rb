@@ -2,9 +2,7 @@ require 'rpm'
 
 module RPM
 
-  class CallbackData
-    attr_accessor :type, :key, :package, :amount, :total
-
+  CallbackData = Struct.new(:type, :key, :package, :amount, :total) do
     def to_s
       "#{type} #{key} #{package} #{amount} #{total}"
     end
@@ -71,16 +69,36 @@ module RPM
 
     # Add a install operation to the transaction
     # @param [Package] pkg Package to install
+    # @param [String] key e.g. filename where to install from
     def install(pkg, key)
-      raise TypeError if not pkg.is_a?(RPM::Package)
-      
-      @keys ||= Array.new
-      raise ArgError, "key must be unique" if @keys.include?(key)
-      @keys << key
-      
-      ret = RPM::C.rpmtsAddInstallElement(@ptr, pkg.ptr, key.to_s, 0, nil)
-      raise RuntimeError if ret != 0
-      nil
+      install_element(pkg, key, :upgrade => false)
+    end
+
+    # Add an upgrade operation to the transaction
+    # @param [Package] pkg Package to upgrade
+    # @param [String] key e.g. filename where to install from
+    def upgrade(pkg, key)
+      install_element(pkg, key, :upgrade => true)
+    end
+
+    # Add a delete operation to the transaction
+    # @param [String, Package, Dependency] pkg Package to delete
+    def delete(pkg)
+      iterator = case pkg
+      when Package
+        pkg[:sigmd5] ? each_match(:sigmd5, pkg[:sigmd5]) : each_match(:label, pkg[:label])
+      when String
+        each_match(:label, pkg)
+      when Dependency
+        each_match(:label, pkg.name).set_iterator_version(pkg.version)
+      else
+        raise TypeError, "illegal argument type"
+      end
+
+      iterator.each do |header|
+        ret = RPM::C.rpmtsAddEraseElement(@ptr, header.ptr, iterator.offset)
+        raise RuntimeError, "Error while adding erase/#{pkg} to transaction" if ret != 0
+      end
     end
 
     # Sets the root directory for this transaction
@@ -180,7 +198,7 @@ module RPM
         psi = RPM::C.rpmpsInitIterator(ps)
         while (RPM::C.rpmpsNextIterator(psi) >= 0)
           problem = RPM::C.rpmpsGetProblem(psi)
-          puts RPM::C.rpmProblemString.read_string
+          STDERR.puts RPM::C.rpmProblemString(problem).read_string
         end
         RPM::C.rpmpsFree(ps)
       end
@@ -189,6 +207,24 @@ module RPM
     # @return [DB] the database associated with this transaction
     def db
       RPM::DB.new(self)
+    end
+
+    private
+
+    # @param [Package] pkg package to install
+    # @param [String] key e.g. filename where to install from
+    # @param opts options
+    #   @option :upgrade Upgrade packages if true
+    def install_element(pkg, key, opts={})
+      raise TypeError, "illegal argument type" if not pkg.is_a?(RPM::Package)
+      
+      @keys ||= Array.new
+      raise ArgError, "key must be unique" if @keys.include?(key)
+      @keys << key
+      
+      ret = RPM::C.rpmtsAddInstallElement(@ptr, pkg.ptr, key.to_s, opts[:upgrade] ? 1 : 0, nil)
+      raise RuntimeError if ret != 0
+      nil
     end
 
   end
