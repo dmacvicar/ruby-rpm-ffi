@@ -1,0 +1,5 @@
+
+2012-02-23  Duncan Mac-Vicar P. <dmacvicar@suse.de>
+
+  * RPM::FFI module is now RPM::C
+  * implement Trasaction#commit, Trasaction#install, Trasaction#upgrade,
