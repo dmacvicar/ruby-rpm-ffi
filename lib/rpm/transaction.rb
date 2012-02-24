@@ -197,8 +197,8 @@ module RPM
         ps = RPM::C.rpmtsProblems(@ptr)
         psi = RPM::C.rpmpsInitIterator(ps)
         while (RPM::C.rpmpsNextIterator(psi) >= 0)
-          problem = RPM::C.rpmpsGetProblem(psi)
-          STDERR.puts RPM::C.rpmProblemString(problem).read_string
+          problem = Problem.from_ptr(RPM::C.rpmpsGetProblem(psi))    
+          STDERR.puts problem
         end
         RPM::C.rpmpsFree(ps)
       end
