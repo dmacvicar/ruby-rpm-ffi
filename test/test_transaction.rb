@@ -82,30 +82,42 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
 
     Dir.mktmpdir do |dir|
       RPM.transaction(dir) do |t|   
-        
-        t.install(pkg, fixture(PACKAGE_FILENAME))
-        t.commit
-        
-        assert File.exist?(File.join(dir, '/var/lib/rpm/Packages')),
-          "rpm db exists"
+        begin
+          t.install(pkg, fixture(PACKAGE_FILENAME))
+          t.commit
+          
+          assert File.exist?(File.join(dir, '/var/lib/rpm/Packages')),
+            "rpm db exists"
 
-        assert File.exist?(File.join(dir, '/usr/share/simple/README')),
-          "package #{pkg} was installed"
-
-        assert_raise TypeError do
-          t.delete(Object.new)
+          assert File.exist?(File.join(dir, '/usr/share/simple/README')),
+            "package #{pkg} should be installed"
+        ensure
+          # Force close so that RPM does not try to do it
+          # when the tmpdir is deleted
+          t.db.close
         end
-
-        t.delete(pkg)
-        t.commit
-
-        assert !File.exist?(File.join(dir, '/usr/share/simple/README')),
-          "package #{pkg} is not installed"
-
-        # Force close so that RPM does not try to do it
-        # when the tmpdir is deleted
-        t.db.close
       end
+
+      RPM.transaction(dir) do |t|   
+        begin
+
+          assert_raise TypeError do
+            t.delete(Object.new)
+          end
+
+          t.delete(pkg)
+          t.commit
+
+          assert !File.exist?(File.join(dir, '/usr/share/simple/README')),
+            "package #{pkg} should not be installed"
+          
+        ensure
+          # Force close so that RPM does not try to do it
+          # when the tmpdir is deleted
+          t.db.close
+        end
+      end
+
     end
   end
 
@@ -114,19 +126,22 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
 
     Dir.mktmpdir do |dir|
       RPM.transaction(dir) do |t|
-        t.install(pkg, fixture(PACKAGE_FILENAME))
-        t.commit do |data|
-          if data.type == :inst_open_file
-            next File.open(data.key)
+        begin
+          t.install(pkg, fixture(PACKAGE_FILENAME))
+          t.commit do |data|
+            if data.type == :inst_open_file
+              next File.open(data.key)
+            end
+            nil
           end
-          nil
-        end
 
-        assert File.exist?(File.join(dir, '/usr/share/simple/README')),
-          "package #{pkg} was installed"
-        # Force close so that RPM does not try to do it
-        # when the tmpdir is deleted
-        t.db.close
+          assert File.exist?(File.join(dir, '/usr/share/simple/README')),
+            "package #{pkg} should be installed"
+        ensure
+          # Force close so that RPM does not try to do it
+          # when the tmpdir is deleted
+          t.db.close
+        end
       end
     end
   end
