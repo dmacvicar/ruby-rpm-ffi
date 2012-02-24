@@ -1,7 +1,7 @@
 # Wake up travis!!
 language: ruby
 before_install:
-  - sudo apt-get install rpm
+  - sudo apt-get install rpm librpm-dev
 rvm:
   - 1.9.3
 
