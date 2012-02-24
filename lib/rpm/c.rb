@@ -7,7 +7,7 @@ module RPM
     extend ::FFI::Library
 
     begin
-      ffi_lib('rpm')
+      ffi_lib ['rpm', 'librpm.so.2']
     rescue LoadError => e
       raise(
         "Can't find rpm libs on your system: #{e.message}"
