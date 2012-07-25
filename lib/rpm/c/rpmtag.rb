@@ -293,7 +293,15 @@ module RPM
     )
     typedef :rpmFlags, :rpmTagReturnType
 
-    attach_function 'rpmTagGetReturnType', [:rpmTagVal], :rpmTagReturnType
+    begin
+      attach_function 'rpmTagGetReturnType', [:rpmTagVal], :rpmTagReturnType
+    rescue ::FFI::NotFoundError
+      attach_function 'rpmTagGetType', [:rpmTagVal], :rpmTagType
+
+      def self.rpmTagGetReturnType(tag)
+        TagReturnType[rpmTagGetType(tag) & TagReturnType[:mask_return_type]]
+      end
+    end
 
   end
 end
