@@ -38,10 +38,19 @@ module RPM
     attach_function 'rpmProblemCreate', [:rpmProblemType, :string, :fnpyKey, :string, :string, :uint64], :rpmProblem
     attach_function 'rpmProblemFree', [:rpmProblem],  :rpmProblem
     attach_function 'rpmProblemLink', [:rpmProblem],  :rpmProblem
-    attach_function 'rpmProblemCompare', [:rpmProblem, :rpmProblem], :int
     attach_function 'rpmProblemGetType', [:rpmProblem], :rpmProblemType
     attach_function 'rpmProblemGetKey', [:rpmProblem], :fnpyKey
     attach_function 'rpmProblemGetStr', [:rpmProblem], :string
     attach_function 'rpmProblemString', [:rpmProblem], :string
+
+    begin
+      attach_function 'rpmProblemCompare', [:rpmProblem, :rpmProblem], :int
+    rescue ::FFI::NotFoundError
+      # TODO: Implement this for librpm 4.8.
+      def self.rpmProblemCompare(a, b)
+        raise NotImplementedError, "rpmProblemCompare is not present in librpm 4.8 and below"
+      end
     end
+
+  end
 end
