@@ -104,14 +104,13 @@ module RPM
     # @param [Version] other Version to compare against
     # @return [Boolean] true if the version is newer than +other+
     def newer?(other)
-      (self <=> other) > 0
+      self > other
     end
-
 
     # @param [Version] other Version to compare against
     # @return [Boolean] true if the version is older than +other+
     def older?(other)
-      ! newer?(other)
+      self < other
     end
 
     # String representation in the form "v-r"

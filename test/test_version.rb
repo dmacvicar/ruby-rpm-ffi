@@ -27,12 +27,14 @@ class RPM_Version_Tests < Test::Unit::TestCase
     assert( @a.newer?(@b) )
     assert( @c.newer?(@a) )
     assert( @d.newer?(@a) )
+    assert( !@a.newer?(@a) )
   end
 
   def test_version_older?
     assert( @b.older?(@a) )
     assert( @a.older?(@c) )
     assert( @a.older?(@d) )
+    assert( !@a.older?(@a) )
   end
 
   def test_vre
