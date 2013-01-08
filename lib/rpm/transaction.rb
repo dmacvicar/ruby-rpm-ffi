@@ -25,9 +25,9 @@ module RPM
     # @return [RPM::MatchIterator] Creates an iterator for +tag+ and +val+
     def init_iterator(tag, val)
       raise TypeError if (val && !val.is_a?(String))
-      
+
       it_ptr = RPM::C.rpmtsInitIterator(@ptr, tag.nil? ? 0 : tag, val, 0)
-      
+
       raise "Can't init iterator for [#{tag}] -> '#{val}'" if it_ptr.null?
       return MatchIterator.from_ptr(it_ptr)
     end
@@ -36,7 +36,7 @@ module RPM
     def ptr
       @ptr
     end
-    
+
     #
     # @yield [Package] Called for each match
     # @param [Number] key RPM tag key
@@ -145,9 +145,9 @@ module RPM
       callback = Proc.new do |hdr, type, amount, total, key, data_ignored|
 
         if block_given?
-          
+
           data = CallbackData.new
-          
+
           data.type = type
           data.key = key.null? ? nil : key.read_string
           data.package = hdr.null? ? nil : Package.new(hdr)
@@ -164,8 +164,8 @@ module RPM
         when :inst_open_file
           # For :inst_open_file the user callback has to
           # return the open file
-          if !ret.is_a?(::File)    
-            raise TypeError, "illegal return value type #{ret.class}. Expected File." 
+          if !ret.is_a?(::File)
+            raise TypeError, "illegal return value type #{ret.class}. Expected File."
           end
 
           fdt = RPM::C.fdDup(ret.to_i)
@@ -188,16 +188,16 @@ module RPM
 
       ret = RPM::C.rpmtsSetNotifyCallback(@ptr, callback, nil)
       raise "Can't set commit callback" if ret != 0
-      
+
       rc = RPM::C.rpmtsRun(@ptr, nil, :none)
 
       raise "Transaction Error" if rc < 0
-      
+
       if rc > 0
         ps = RPM::C.rpmtsProblems(@ptr)
         psi = RPM::C.rpmpsInitIterator(ps)
         while (RPM::C.rpmpsNextIterator(psi) >= 0)
-          problem = Problem.from_ptr(RPM::C.rpmpsGetProblem(psi))    
+          problem = Problem.from_ptr(RPM::C.rpmpsGetProblem(psi))
           STDERR.puts problem
         end
         RPM::C.rpmpsFree(ps)
@@ -217,11 +217,11 @@ module RPM
     #   @option :upgrade Upgrade packages if true
     def install_element(pkg, key, opts={})
       raise TypeError, "illegal argument type" if not pkg.is_a?(RPM::Package)
-      
+
       @keys ||= Array.new
       raise ArgError, "key must be unique" if @keys.include?(key)
       @keys << key
-      
+
       ret = RPM::C.rpmtsAddInstallElement(@ptr, pkg.ptr, key.to_s, opts[:upgrade] ? 1 : 0, nil)
       raise RuntimeError if ret != 0
       nil
