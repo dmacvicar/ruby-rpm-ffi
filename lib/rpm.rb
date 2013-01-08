@@ -19,7 +19,7 @@ module RPM
   TRANS_FLAG = RPM::C::TransFlags
   PROB_FILTER = RPM::C::ProbFilter
   MIRE = RPM::C::RegexpMode
-  
+
   # Creates a new transaction and pass it
   # to the given block
   #
@@ -35,7 +35,6 @@ module RPM
     ts.root_dir = root
     yield ts
   end
-
 
   # @param [String] name Name of the macro
   # @return [String] value of macro +name+
@@ -59,7 +58,7 @@ module RPM
   end
 
 end
- 
+
 RPM::C.rpmReadConfigFiles(nil, nil)
 RPM::C.rpmInitMacros(nil, RPM::C.MACROFILES)
 
