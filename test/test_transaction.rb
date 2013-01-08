@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), 'helper')
+require_relative('helper')
 require 'tmpdir'
 require 'pathname'
 
@@ -24,7 +24,7 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
     RPM.transaction do |t|
       it = t.init_iterator(nil, nil)
       it.regexp(:name, :glob, '*audio*')
-      it.each do |pkg| 
+      it.each do |pkg|
         assert pkg.name.include?("audio"), "'#{pkg.name}' contains 'audio'"
       end
     end
@@ -35,11 +35,11 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
     RPM.transaction do |t|
       it = t.init_iterator(nil, nil)
       it.version(RPM::Version.new('2.1'))
-      it.each do |sig| 
+      it.each do |sig|
         puts sig
       end
     end
-  end 
+  end
 
   def test_basic_transaction_setters
     Dir.mktmpdir do |dir|
@@ -62,12 +62,12 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
     pkg = RPM::Package.open(fixture(filename))
 
     Dir.mktmpdir do |dir|
-      RPM.transaction(dir) do |t|   
-        
+      RPM.transaction(dir) do |t|
+
         t.flags = RPM::TRANS_FLAG_TEST
         t.install(pkg, fixture(filename))
         t.commit
-        
+
         assert File.exist?(File.join(dir, '/var/lib/rpm/Packages')),
           "rpm db exists"
 
@@ -81,11 +81,11 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
     pkg = RPM::Package.open(fixture(PACKAGE_FILENAME))
 
     Dir.mktmpdir do |dir|
-      RPM.transaction(dir) do |t|   
+      RPM.transaction(dir) do |t|
         begin
           t.install(pkg, fixture(PACKAGE_FILENAME))
           t.commit
-          
+
           assert File.exist?(File.join(dir, '/var/lib/rpm/Packages')),
             "rpm db exists"
 
@@ -98,7 +98,7 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
         end
       end
 
-      RPM.transaction(dir) do |t|   
+      RPM.transaction(dir) do |t|
         begin
 
           assert_raise TypeError do
@@ -110,7 +110,7 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
 
           assert !File.exist?(File.join(dir, '/usr/share/simple/README')),
             "package #{pkg} should not be installed"
-          
+
         ensure
           # Force close so that RPM does not try to do it
           # when the tmpdir is deleted
