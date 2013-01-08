@@ -21,11 +21,6 @@ module RPM
             :script_preun, (1 << 11),
             :script_postun, (1 << 12),
             :script_verify, (1 << 13),
-            :script_pre, (1 << 9),
-            :script_post, (1 << 10),
-            :script_preun, (1 << 11),
-            :script_postun, (1 << 12),
-            :script_verify, (1 << 13),
             :find_requires, (1 << 14),
             :find_provides, (1 << 15),
             #
