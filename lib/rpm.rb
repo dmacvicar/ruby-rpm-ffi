@@ -11,14 +11,6 @@ require 'rpm/utils'
 
 module RPM
 
-  module LibC
-    extend ::FFI::Library
-    ffi_lib ::FFI::Library::LIBC
-
-    # call #attach_function to attach to malloc, free, memcpy, bcopy, etc.
-     attach_function :malloc, [:size_t], :pointer
-  end
-
   TAG = RPM::C::Tag
   LOG = RPM::C::Log
   SENSE = RPM::C::Sense
