@@ -217,6 +217,7 @@ module RPM
     #   @option :upgrade Upgrade packages if true
     def install_element(pkg, key, opts={})
       raise TypeError, "illegal argument type" if not pkg.is_a?(RPM::Package)
+      raise ArgumentError, "#{self}: key '#{key}' must be unique" if @keys.include?(key.object_id)
 
       @keys ||= Array.new
       raise ArgError, "key must be unique" if @keys.include?(key)
