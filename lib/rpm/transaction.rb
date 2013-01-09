@@ -15,7 +15,11 @@ module RPM
     end
 
     def initialize(opts={})
-
+      # http://markmail.org/message/ypsiqxop442p7rzz
+      # The key pointer needs to stay valid during commit 
+      # so we keep a reference to them mapping from
+      # object_id to ruby object.
+      @keys = {}
       opts[:root] ||= '/'
 
       @ptr = ::FFI::AutoPointer.new(RPM::C.rpmtsCreate, Transaction.method(:release))
@@ -142,14 +146,14 @@ module RPM
       # The C callback expects you to return a file handle,
       # We expect from the user to get a File, which we
       # then convert to a file handle to return.
-      callback = Proc.new do |hdr, type, amount, total, key, data_ignored|
+      callback = Proc.new do |hdr, type, amount, total, key_ptr, data_ignored|
+        key_id = key_ptr.address
+        key = @keys.include?(key_id) ? @keys[key_id] : nil
 
         if block_given?
-
           data = CallbackData.new
-
           data.type = type
-          data.key = key.null? ? nil : key.read_string
+          data.key = key
           data.package = hdr.null? ? nil : Package.new(hdr)
           data.amount = amount
           data.total = total
@@ -219,11 +223,11 @@ module RPM
       raise TypeError, "illegal argument type" if not pkg.is_a?(RPM::Package)
       raise ArgumentError, "#{self}: key '#{key}' must be unique" if @keys.include?(key.object_id)
 
-      @keys ||= Array.new
-      raise ArgError, "key must be unique" if @keys.include?(key)
-      @keys << key
+      # keep a reference to the key as rpmtsAddInstallElement will keep a copy
+      # of the passed pointer (we pass the object_id)
+      @keys[key.object_id] = key
 
-      ret = RPM::C.rpmtsAddInstallElement(@ptr, pkg.ptr, key.to_s, opts[:upgrade] ? 1 : 0, nil)
+      ret = RPM::C.rpmtsAddInstallElement(@ptr, pkg.ptr, FFI::Pointer.new(key.object_id), opts[:upgrade] ? 1 : 0, nil)
       raise RuntimeError if ret != 0
       nil
     end
