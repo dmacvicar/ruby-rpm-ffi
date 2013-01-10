@@ -53,7 +53,7 @@ module RPM
     if value.nil?
       RPM::C.delMacro(nil, name.to_s)
     else
-      RPM::C.addMacro(nil, name.to_s, nil, value.to_s, RPM::C::RMIL_DEFAULT)
+      RPM::C.addMacro(nil, name.to_s, "", value.to_s, RPM::C::RMIL_DEFAULT)
     end
   end
 
