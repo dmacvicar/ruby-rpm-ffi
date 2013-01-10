@@ -26,10 +26,6 @@ echo "Hola" > %{buildroot}%{_datadir}/%{name}/README.es
 %clean
 %{?buildroot:%__rm -rf "%{buildroot}"}
 
-%post
-
-%postun
-
 %files
 %defattr(-,root,root)
 %{_datadir}/%{name}/README

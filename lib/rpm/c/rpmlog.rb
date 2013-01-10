@@ -19,6 +19,8 @@ module RPM
 
     attach_function 'rpmlogSetMask', [:int], :int
     # TODO: defines to set verbosity
+    # ...
+    attach_function 'rpmlogMessage', [], :string
 
   end
 end

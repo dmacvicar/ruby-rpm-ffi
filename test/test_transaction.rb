@@ -36,7 +36,7 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
       it = t.init_iterator(nil, nil)
       it.version(RPM::Version.new('2.1'))
       it.each do |sig|
-        puts sig
+        # FIXME check that this worked
       end
     end
   end
@@ -106,6 +106,10 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
           end
 
           t.delete(pkg)
+
+          t.order
+          t.clean
+
           t.commit
 
           assert !File.exist?(File.join(dir, '/usr/share/simple/README')),
@@ -128,11 +132,20 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
       RPM.transaction(dir) do |t|
         begin
           t.install(pkg, fixture(PACKAGE_FILENAME))
+
+          t.check do |problem|
+            STDERR.puts "Problem: #{problem}"
+          end
+
+          t.order
+          t.clean
+
           t.commit do |data|
-            if data.type == :inst_open_file
-              next File.open(data.key)
+            next case data.type
+              when :inst_open_file then
+                @f = File.open(data.key, 'r')
+              when :inst_close_file then @f.close
             end
-            nil
           end
 
           assert File.exist?(File.join(dir, '/usr/share/simple/README')),

@@ -3,6 +3,8 @@ require 'rpm'
 module RPM
 
   CallbackData = Struct.new(:type, :key, :package, :amount, :total) do
+
+
     def to_s
       "#{type} #{key} #{package} #{amount} #{total}"
     end
@@ -125,6 +127,38 @@ module RPM
       RPM::C.rpmtsFlags(@ptr)
     end
 
+    # Determine package order in the transaction according to dependencies
+    #
+    # The final order ends up as installed packages followed by removed
+    # packages, with packages removed for upgrades immediately following
+    # the new package to be installed.
+    #
+    # @returns [Fixnum] no. of (added) packages that could not be ordered
+    def order
+      RPM::C.rpmtsOrder(@ptr)
+    end
+
+    # Free memory needed only for dependency checks and ordering.
+    def clean
+      RPM::C.rpmtsClean(@ptr)
+    end
+
+    def check
+      rc = RPM::C.rpmtsCheck(@ptr)
+      probs = RPM::C.rpmtsProblems(@ptr)
+
+      return if rc < 0
+      begin
+        psi = RPM::C.rpmpsInitIterator(probs)
+        while (RPM::C.rpmpsNextIterator(psi) >= 0)
+          problem = Problem.from_ptr(RPM::C.rpmpsGetProblem(psi))
+          yield problem
+        end
+      ensure
+        RPM::C.rpmpsFree(probs)
+      end
+    end
+
     # Performs the transaction.
     # @param [Number] flag Transaction flags, default +RPM::TRANS_FLAG_NONE+
     # @param [Number] filter Transaction filter, default +RPM::PROB_FILTER_NONE+
@@ -136,10 +170,22 @@ module RPM
     #   end
     # end
     # @yield [CallbackData] sig Transaction progress
-
     def commit(&user_callback)
       flags = RPM::C::TransFlags[:none]
 
+      callback = Proc.new do |hdr, type, amount, total, key_ptr, data_ignored|
+        key_id = key_ptr.address
+        key = @keys.include?(key_id) ? @keys[key_id] : nil
+
+        case
+          when block_given?
+            package = hdr.null? ? nil : Package.new(hdr)
+            data = CallbackData.new(type, key, package, amount, total)
+            user_callback.call(data)
+          else
+            RPM::C.rpmShowProgress(hdr, type, amount, total, key, data_ignored)
+        end
+      end
       # We create a callback to pass to the C method and we
       # call the user supplied callback from there
       #
@@ -150,52 +196,50 @@ module RPM
         key_id = key_ptr.address
         key = @keys.include?(key_id) ? @keys[key_id] : nil
 
-        if block_given?
-          data = CallbackData.new
-          data.type = type
-          data.key = key
-          data.package = hdr.null? ? nil : Package.new(hdr)
-          data.amount = amount
-          data.total = total
-          ret = user_callback.call(data)
-        else
-          # No custom callback given, use the default to show progress
-          ret = RPM::C.rpmShowProgress(hdr, type, amount, total, key, data_ignored)
-          next ret
-        end
+        case
+          when block_given?
+            package = hdr.null? ? nil : Package.new(hdr)
+            data = CallbackData.new(type, key, package, amount, total)
+            ret = user_callback.call(data)
 
-        case type
-        when :inst_open_file
-          # For :inst_open_file the user callback has to
-          # return the open file
-          if !ret.is_a?(::File)
-            raise TypeError, "illegal return value type #{ret.class}. Expected File."
-          end
-
-          fdt = RPM::C.fdDup(ret.to_i)
-          if (fdt.null? || RPM::C.Ferror(fdt) != 0)
-            raise RuntimeError, "Can't open #{data.key}: #{RPM::C.Fstrerror(fdt)}"
-            RPM::C.Fclose(fdt) if not fdt.nil?
+            # For OPEN_FILE we need to do some type conversion
+            # for certain callback types we need to do some
+            case type
+              when :inst_open_file
+                # For :inst_open_file the user callback has to
+                # return the open file
+                if !ret.is_a?(::File)
+                  raise TypeError, "illegal return value type #{ret.class}. Expected File."
+                end
+                fdt = RPM::C.fdDup(ret.to_i)
+                if (fdt.null? || RPM::C.Ferror(fdt) != 0)
+                  raise RuntimeError, "Can't use opened file #{data.key}: #{RPM::C.Fstrerror(fdt)}"
+                  RPM::C.Fclose(fdt) if not fdt.nil?
+                else
+                  fdt = RPM::C.fdLink(fdt)
+                  @fdt = fdt
+                end
+                # return the (RPM type) file handle
+                fdt
+              when :inst_close_file
+                fdt = @fdt
+                RPM::C.Fclose(fdt)
+                @fdt = nil
+              else
+                ret
+            end
           else
-            fdt = RPM::C.fdLink(fdt)
-            @fdt = fdt
-          end
-          # return the file handle
-          next fdt
-        when :inst_close_file
-          fdt = @fdt
-          RPM::C.Fclose(fdt)
-          @fdt = nil
+            # No custom callback given, use the default to show progress
+            RPM::C.rpmShowProgress(hdr, type, amount, total, key, data_ignored)
         end
-        nil
       end
 
-      ret = RPM::C.rpmtsSetNotifyCallback(@ptr, callback, nil)
-      raise "Can't set commit callback" if ret != 0
+      rc = RPM::C.rpmtsSetNotifyCallback(@ptr, callback, nil)
+      raise "Can't set commit callback" if rc != 0
 
       rc = RPM::C.rpmtsRun(@ptr, nil, :none)
 
-      raise "Transaction Error" if rc < 0
+      raise "#{self}: #{RPM::C.rpmlogMessage}" if rc < 0
 
       if rc > 0
         ps = RPM::C.rpmtsProblems(@ptr)

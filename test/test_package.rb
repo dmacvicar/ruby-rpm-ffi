@@ -18,7 +18,7 @@ class RPM_Header_Tests < Test::Unit::TestCase
 
     assert_equal "simple-1.0-0-i586", pkg.to_s
 
-    assert_equal '6895248ed5a081f73d035174329169c7', pkg.signature
+    assert_equal '3b5f9d468c877166532c662e29f43bc3', pkg.signature
 
     assert_kind_of RPM::Package, pkg
     assert_equal 'simple', pkg[:name]
@@ -44,8 +44,6 @@ class RPM_Header_Tests < Test::Unit::TestCase
 
     assert pkg.provides.map(&:name).include?("simple(x86-32)")
     assert pkg.provides.map(&:name).include?("simple")
-
-    assert pkg.requires.map(&:name).include?("/bin/sh")
 
     assert pkg.files.map(&:path).include?("/usr/share/simple/README")
     assert pkg.files.map(&:path).include?("/usr/share/simple/README.es")
