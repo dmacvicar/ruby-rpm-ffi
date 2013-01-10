@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), 'helper')
+require_relative('helper')
 require 'rpm/compat'
 
 class RPM_Dependency_Tests < Test::Unit::TestCase
