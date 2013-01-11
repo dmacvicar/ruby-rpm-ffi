@@ -2,7 +2,8 @@
 language: ruby
 before_install:
   - sudo apt-get install rpm
+  - sudo apt-get install -y -q fakeroot fakechroot
 rvm:
   - 1.9.3
-
+script: fakechroot rake
 
