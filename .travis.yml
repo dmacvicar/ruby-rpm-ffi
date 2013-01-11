@@ -5,8 +5,7 @@ before_install:
   - sudo apt-get install -y -q fakeroot fakechroot
   - sudo apt-get install -y -q locales
   - sudo rm -rf /etc/locale.gen
-  - sudo echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
-  - sudo echo "es_ES.UTF-8 UTF-8" > /etc/locale.gen
+  - echo -e "en_US.UTF-8 UTF-8i\nes_ES.UTF-8 UTF-8" | sudo dd of=/etc/locale.gen
   - sudo /usr/sbin/locale-gen
 #  - sudo bash -c "DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales"
 rvm:
