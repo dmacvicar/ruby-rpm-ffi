@@ -118,13 +118,13 @@ module RPM
 
   end
 
-  class Conflict < Dependency
+  class Obsolete < Dependency
 
     def initialize(name, version, flags, owner)
       super(name, version, flags, owner)
-      @nametag = RPM::TAG[:conflictname]
-      @versiontag = RPM::TAG[:conflictversion]
-      @flagstag = RPM::TAG[:conflictflags]
+      @nametag = RPM::TAG[:obsoletename]
+      @versiontag = RPM::TAG[:obsoleteversion]
+      @flagstag = RPM::TAG[:obsoleteflags]
     end
 
   end

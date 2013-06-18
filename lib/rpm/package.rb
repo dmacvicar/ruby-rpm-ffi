@@ -175,12 +175,12 @@ module RPM
 
     # @return [Array<RPM::Conflicts>] Conflicts list for this package
     def conflicts
-      dependencies(RPM::conflicts, :conflictsname, :conflictsversion, :conflictsflags)
+      dependencies(RPM::Conflict, :conflictname, :conflictversion, :conflictflags)
     end
 
     # @return [Array<RPM::Obsolete>] Obsoletes list for this package
     def obsoletes
-      dependencies(RPM::Obsoletes, :obsoletename, :obsoleteversion, :obsoleteflags)
+      dependencies(RPM::Obsolete, :obsoletename, :obsoleteversion, :obsoleteflags)
     end
 
     # @return [Array<RPM::Changelog>] changelog of the package as an array 

@@ -48,11 +48,34 @@ class RPM_Header_Tests < Test::Unit::TestCase
     assert pkg.files.map(&:path).include?("/usr/share/simple/README")
     assert pkg.files.map(&:path).include?("/usr/share/simple/README.es")
 
+    assert pkg.conflicts.empty?
+    assert pkg.requires.map(&:name).include?('rpmlib(PayloadIsLzma)')
+    assert pkg.obsoletes.empty?
+
     file = pkg.files.select {|x| x.path == "/usr/share/simple/README" }.first
     assert_nil file.link_to
     assert !file.symlink?
 
     assert_equal ["- Fix something", "- Fix something else"], pkg.changelog.map(&:text)
+  end
+
+  def test_dependencies
+    pkg = RPM::Package.open(fixture('simple_with_deps-1.0-0.i586.rpm'))
+    assert_equal 'simple_with_deps', pkg.name
+
+    assert pkg.provides.map(&:name).include?('simple_with_deps(x86-32)')
+    assert pkg.provides.map(&:name).include?('simple_with_deps')
+
+    assert pkg.requires.map(&:name).include?("a")
+    b = pkg.requires.find {|x| x.name == 'b'}
+    assert_not_nil b
+    assert_equal '1.0', b.version.to_s
+
+    assert pkg.conflicts.map(&:name).include?('c')
+    assert pkg.conflicts.map(&:name).include?('d')
+
+    assert pkg.obsoletes.map(&:name).include?('f')
+
   end
 
 end
