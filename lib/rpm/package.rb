@@ -115,6 +115,7 @@ module RPM
       md5list = self[:filemd5s]
       ownerlist = self[:fileusername]
       grouplist = self[:filegroupname]
+      inodelist = self[:fileinodes]
 
       ret = []
 
@@ -129,6 +130,7 @@ module RPM
                 grouplist[i],
                 rdevlist[i],
                 modelist[i],
+                inodelist[i],
                 flaglist.nil? ? RPM::C::FileAttrs[:none] : flaglist[i],
                 statelist.nil? ? RPM::C::FileState[:normal] : statelist[i]
         )
