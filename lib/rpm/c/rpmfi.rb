@@ -7,7 +7,7 @@ module RPM
       :none, 0,
       :config, (1 << 0),
       :doc, (1 << 1),
-      :icon, (1 <<2),
+      :icon, (1 << 2),
       :missingok, (1 << 3),
       :noreplace, (1 << 4),
       :specfile, (1 << 5),
