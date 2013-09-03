@@ -34,17 +34,17 @@ module RPM
 
     # @return [Boolean] True if the file is marked as a configuration file
     def config?
-      ! (@attr & FileAttrs[:config]).zero?
+      ! (@attr & RPM::C::FileAttrs[:config]).zero?
     end
 
     # @return [Boolean] True if the file is marked as documentation
     def doc?
-      ! (@attr & FileAttrs[:doc]).zero?
+      ! (@attr & RPM::C::FileAttrs[:doc]).zero?
     end
 
     # @return [Boolean] True if the file is marked as do not use
     def donotuse?
-      ! (@attr & FileAttrs[:donotuse]).zero?
+      ! (@attr & RPM::C::FileAttrs[:donotuse]).zero?
     end
 
     # @return [Boolean] True if the file is marked that can be missing on disk
@@ -52,7 +52,7 @@ module RPM
     # This modifier is used for files or links that are created during the %post scripts
     # but will need to be removed if the package is removed
     def is_missingok?
-      ! (@attr & FileAttrs[:missingok]).zero?
+      ! (@attr & RPM::C::FileAttrs[:missingok]).zero?
     end
 
     # @return [Boolean] True if the file is marked as configuration not to be replaced
@@ -63,12 +63,12 @@ module RPM
     #   if the file has been modified on disk, the rpm command will copy the new file with an extra
     #   file-name extension of .rpmnew.
     def is_noreplace?
-      ! (@attr & FileAttrs[:noreplace]).zero?
+      ! (@attr & RPM::C::FileAttrs[:noreplace]).zero?
     end
 
     # @return [Boolean] True if the file is marked as a spec file
     def is_specfile?
-      ! (@attr & FileAttrs[:specfile]).zero?
+      ! (@attr & RPM::C::FileAttrs[:specfile]).zero?
     end
 
     # @return [Boolean] True if the file is marked as ghost
@@ -78,37 +78,37 @@ module RPM
     #   will create.
     # For example, you may want to ensure that a program’s log file has certain attributes.
     def ghost?
-      ! (@attr & FileAttrs[:ghost]).zero?
+      ! (@attr & RPM::C::FileAttrs[:ghost]).zero?
     end
 
     # @return [Boolean] True if the file is a license
     def license?
-      ! (@attr & FileAttrs[:license]).zero?
+      ! (@attr & RPM::C::FileAttrs[:license]).zero?
     end
 
     # @return [Boolean] True if the file is a README
     def readme?
-      ! (@attr & FileAttrs[:readme]).zero?
+      ! (@attr & RPM::C::FileAttrs[:readme]).zero?
     end
 
     # @return [Boolean] True if the file is listed in the exlude section
     def exclude?
-      ! (@attr & FileAttrs[:exclude]).zero?
+      ! (@attr & RPM::C::FileAttrs[:exclude]).zero?
     end
 
     # @return [Boolean] True if the file is replaced during installation
     def replaced?
-      ! (@attr & FileState[:replaced]).zero?
+      ! (@attr & RPM::C::FileState[:replaced]).zero?
     end
 
     # @return [Boolean] True if the file is not installed
     def notinstalled?
-      ! (@attr & FileState[:notinstalled]).zero?
+      ! (@attr & RPM::C::FileState[:notinstalled]).zero?
     end
 
     # @return [Boolean] True if the file is shared over the network
     def netshared?
-      ! (@attr & FileState[:netshared]).zero?
+      ! (@attr & RPM::C::FileState[:netshared]).zero?
     end
 
     def initialize(path, md5sum, link_to, size, mtime, owner, group, rdev, mode, attr, state)
