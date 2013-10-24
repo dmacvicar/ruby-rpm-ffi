@@ -31,9 +31,13 @@ module RPM
   #   end
   #
   def self.transaction(root = '/')
-    ts = Transaction.new
-    ts.root_dir = root
-    yield ts
+    begin
+      ts = Transaction.new
+      ts.root_dir = root
+      yield ts
+    ensure
+      ts.ptr.free
+    end
   end
 
   # @param [String] name Name of the macro
