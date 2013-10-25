@@ -15,17 +15,23 @@ class RPM_File_Tests < Test::Unit::TestCase
                       "owner", "group", 43, 0777, 44, 45)
     f.config?
     f.doc?
-    f.donotuse?
     f.is_missingok?
     f.is_noreplace?
     f.is_specfile?
     f.ghost?
     f.license?
     f.readme?
-    f.exclude?
     f.replaced?
     f.notinstalled?
     f.netshared?
+
+    assert_raise NotImplementedError do
+      f.exclude?
+    end
+
+    assert_raise NotImplementedError do
+      f.donotuse?
+    end
   end
 
 

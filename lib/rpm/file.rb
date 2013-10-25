@@ -43,8 +43,11 @@ module RPM
     end
 
     # @return [Boolean] True if the file is marked as do not use
+    # @deprecated RPMFILE_DONOTUSE was removed in recent versions of RPM.
     def donotuse?
-      ! (@attr & RPM::C::FileAttrs[:donotuse]).zero?
+      msg = "RPMFILE_DONOTUSE was removed in recent versions of RPM."
+      warn "#{Kernel.caller.first} #{msg}"
+      raise NotImplementedError
     end
 
     # @return [Boolean] True if the file is marked that can be missing on disk
@@ -91,9 +94,12 @@ module RPM
       ! (@attr & RPM::C::FileAttrs[:readme]).zero?
     end
 
-    # @return [Boolean] True if the file is listed in the exlude section
+    # @raise NotImplementedError
+    # @deprecated RPMFILE_EXCLUDE was removed in recent versions of RPM.
     def exclude?
-      ! (@attr & RPM::C::FileAttrs[:exclude]).zero?
+      msg = "RPMFILE_EXCLUDE was removed in recent versions of RPM."
+      warn "#{Kernel.caller.first} #{msg}"
+      raise NotImplementedError
     end
 
     # @return [Boolean] True if the file is replaced during installation
