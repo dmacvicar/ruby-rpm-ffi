@@ -26,9 +26,9 @@ class RPM_Header_Tests < Test::Unit::TestCase
     assert_kind_of RPM::Version, pkg.version
     assert_equal '1.0-0', pkg.version.to_s
 
-    backup_lang = ENV['LANG']
+    backup_lang = ENV['LC_ALL']
 
-    ENV['LANG'] = 'C'
+    ENV['LC_ALL'] = 'C'
     assert_equal 'Simple dummy package', pkg[:summary]
     assert_equal 'Dummy package', pkg[:description]
     
@@ -36,7 +36,7 @@ class RPM_Header_Tests < Test::Unit::TestCase
     assert_equal 'Paquete simple de muestra', pkg[:summary]
     assert_equal 'Paquete de muestra', pkg[:description]
 
-    ENV['LANG'] = backup_lang
+    ENV['LC_ALL'] = backup_lang
     
     # Arrays
     assert_equal ["root", "root"], pkg[:fileusername]
