@@ -32,7 +32,7 @@ class RPM_Header_Tests < Test::Unit::TestCase
     assert_equal 'Simple dummy package', pkg[:summary]
     assert_equal 'Dummy package', pkg[:description]
     
-    ENV['LANG'] = 'es_ES.UTF-8'
+    ENV['LC_ALL'] = 'es_ES.UTF-8'
     assert_equal 'Paquete simple de muestra', pkg[:summary]
     assert_equal 'Paquete de muestra', pkg[:description]
 
