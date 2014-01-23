@@ -291,6 +291,41 @@ module RPM
     end
 
     def self.open(filename)
+      Package.new(filename)
+    end
+
+    # @visibility private
+    def self.release(ptr)
+      RPM::C.headerFree(ptr)
+    end
+
+    # @visibility private
+    def self.release_td(ptr)
+      RPM::C.rpmtdFree(ptr)
+    end
+
+    # @visibility private
+    def initialize(what)
+      case what
+        when String then initialize_from_filename(what)
+        else initialize_from_header(what)
+      end
+    end
+
+    # @visibility private
+    def initialize_from_header(hdr=nil)
+      if hdr.nil?
+        @hdr = ::FFI::AutoPointer.new(RPM::C.headerNew, Header.method(:release))
+      elsif hdr.is_a?(::FFI::Pointer)
+        # ref
+        hdr = RPM::C.headerLink(hdr)
+        @hdr = ::FFI::AutoPointer.new(hdr, Package.method(:release))
+      else
+        raise "Can't initialize header with '#{hdr}'"
+      end
+    end
+
+    def initialize_from_filename(filename)
       # it sucks not using the std File.open here
       hdr = ::FFI::MemoryPointer.new(:pointer)
       fd = nil
@@ -305,30 +340,7 @@ module RPM
       ensure
         RPM::C.Fclose(fd) unless fd.nil?
       end
-      Package.new(hdr.get_pointer(0))
-    end
-
-    # @visibility private
-    def self.release(ptr)
-      RPM::C.headerFree(ptr)
-    end
-
-    # @visibility private
-    def self.release_td(ptr)
-      RPM::C.rpmtdFree(ptr)
-    end
-
-    # @visibility private
-    def initialize(hdr=nil)
-      if hdr.nil?
-        @hdr = ::FFI::AutoPointer.new(RPM::C.headerNew, Header.method(:release))
-      elsif hdr.is_a?(::FFI::Pointer)
-        # ref
-        hdr = RPM::C.headerLink(hdr)
-        @hdr = ::FFI::AutoPointer.new(hdr, Package.method(:release))
-      else
-        raise "Can't initialize header with '#{hdr}'"
-      end
+      initialize_from_header(hdr.get_pointer(0))
     end
 
     # @return [RPM::C::Header] header pointer
