@@ -70,12 +70,12 @@ module RPM
 
     # @return [Boolean] true if '=<' is used to compare the version
     def le?
-      (flags & RPM::SENSE[:less]) && (flags & RPMSENSE[:equal])
+      (flags & RPM::SENSE[:less]) && (flags & RPM::SENSE[:equal])
     end
 
     # @return [Boolean] true if '>=' is used to compare the version
     def ge?
-      (flags & RPM::SENSE[:greater]) && (flags & RPMSENSE[:equal])
+      (flags & RPM::SENSE[:greater]) && (flags & RPM::SENSE[:equal])
     end
 
     # @return [Boolean] true if this is a pre-requires
