@@ -25,11 +25,11 @@ class RPMFileTests < MiniTest::Test
     f.notinstalled?
     f.netshared?
 
-    assert_raise NotImplementedError do
+    assert_raises NotImplementedError do
       f.exclude?
     end
 
-    assert_raise NotImplementedError do
+    assert_raises NotImplementedError do
       f.donotuse?
     end
   end

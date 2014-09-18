@@ -286,6 +286,15 @@ The gem is divided in two modules:
     [ ] Spec#dup
     [ ] Spec#clone
 
+
+== TESTING
+
+Unit tests can be run using the `rake test` command.
+
+However some tests have to be run as root user in order to pass. These tests
+lead the `rpm` library to use the `chroot` command, which can be executed only
+by root user.
+
 == TODO
 
 * Check Package#signature should return String?

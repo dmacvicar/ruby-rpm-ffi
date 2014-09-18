@@ -68,7 +68,7 @@ class RPMHeaderTests < MiniTest::Test
 
     assert pkg.requires.map(&:name).include?("a")
     b = pkg.requires.find {|x| x.name == 'b'}
-    assert_not_nil b
+    assert b
     assert_equal '1.0', b.version.to_s
 
     assert pkg.conflicts.map(&:name).include?('c')

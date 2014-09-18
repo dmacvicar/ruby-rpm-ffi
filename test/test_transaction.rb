@@ -101,7 +101,7 @@ class RPMTransactionTests < MiniTest::Test
       RPM.transaction(dir) do |t|
         begin
 
-          assert_raise TypeError do
+          assert_raises TypeError do
             t.delete(Object.new)
           end
 
