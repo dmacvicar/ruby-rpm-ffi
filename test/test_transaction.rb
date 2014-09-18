@@ -2,7 +2,7 @@ require_relative('helper')
 require 'tmpdir'
 require 'pathname'
 
-class RPM_Transaction_Tests < Test::Unit::TestCase
+class RPMTransactionTests < MiniTest::Test
 
   PACKAGE_FILENAME = 'simple-1.0-0.i586.rpm'
 

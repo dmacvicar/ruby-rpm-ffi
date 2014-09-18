@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'helper')
 
-class RPM_Header_Tests < Test::Unit::TestCase
+class RPMHeaderTests < MiniTest::Test
 
   def test_create
 
@@ -10,9 +10,9 @@ class RPM_Header_Tests < Test::Unit::TestCase
   end
 
   def test_open
-    
+
     pkg = RPM::Package.open(fixture('simple-1.0-0.i586.rpm'))
-    
+
     req = RPM::Require.new("simple", RPM::Version.new("1.0", "0"), RPM::SENSE_GREATER|RPM::SENSE_EQUAL, nil)
     assert req.satisfy?(pkg)
 
@@ -31,13 +31,13 @@ class RPM_Header_Tests < Test::Unit::TestCase
     ENV['LC_ALL'] = 'C'
     assert_equal 'Simple dummy package', pkg[:summary]
     assert_equal 'Dummy package', pkg[:description]
-    
+
     ENV['LC_ALL'] = 'es_ES.UTF-8'
     assert_equal 'Paquete simple de muestra', pkg[:summary]
     assert_equal 'Paquete de muestra', pkg[:description]
 
     ENV['LC_ALL'] = backup_lang
-    
+
     # Arrays
     assert_equal ["root", "root"], pkg[:fileusername]
     assert_equal [6, 5], pkg[:filesizes]

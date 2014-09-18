@@ -1,8 +1,8 @@
 require_relative('helper')
 require 'rpm/compat'
 
-class RPM_Dependency_Tests < Test::Unit::TestCase
-    
+class RPMDependencyTests < MiniTest::Test
+
     EQ = RPM::SENSE_EQUAL
     LT = RPM::SENSE_LESS
     GT = RPM::SENSE_GREATER
@@ -12,7 +12,7 @@ class RPM_Dependency_Tests < Test::Unit::TestCase
         req = requires("foo", "1", "1", 0, EQ|GT)
         assert(req.satisfy?(prv))
         assert(prv.satisfy?(req))
-        
+
         # Different names don't overlap
         prv = provides("foo", "2", "1", 0, EQ)
         req = requires("bar", "1", "1", 0, EQ|GT)

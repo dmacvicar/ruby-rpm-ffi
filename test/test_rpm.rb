@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'helper')
 
-class RPM_RPM_Tests < Test::Unit::TestCase
+class RPMRPMTests < MiniTest::Test
 
   def test_enum
     assert RPM::TAG[:not_found]
