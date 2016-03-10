@@ -10,5 +10,5 @@ rvm:
   - 2.3.0
 script:
   - gem install bundler
-  - sudo bundle exec rake test
+  - rvmsudo bundle exec rake test
 
