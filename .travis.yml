@@ -5,6 +5,7 @@ before_install:
   - sudo apt-get install -y rpm
   - sudo apt-get install -y -q locales
   - sudo locale-gen es_ES.utf8
+  - sudo rpmdb --initdb
 rvm:
   - 2.2.4
   - 2.3.0
