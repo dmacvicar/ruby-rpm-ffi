@@ -1,7 +1,7 @@
 require_relative('helper')
 require 'rpm/compat'
 
-class RPMDependencyTests < MiniTest::Test
+class RPMDependencyTests < MiniTest::Unit::TestCase
 
     EQ = RPM::SENSE_EQUAL
     LT = RPM::SENSE_LESS

@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'helper')
 
-class RPMHeaderTests < MiniTest::Test
+class RPMHeaderTests < MiniTest::Unit::TestCase
 
   def test_create
     problem = RPM::Problem.create(:requires, "foo-1.0-0", "foo.rpm", "bar-1.0-0", "Hello", 1)

@@ -1,4 +1,5 @@
 $: << File.join(File.dirname(__FILE__), "..", "lib")
+require "minitest/unit"
 require "minitest/autorun"
 require 'rpm'
 
