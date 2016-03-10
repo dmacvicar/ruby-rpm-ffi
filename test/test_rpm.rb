@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'helper')
 
-class RPM_RPM_Tests < Test::Unit::TestCase
+class RPMRPMTests < MiniTest::Test
 
   def test_enum
     assert RPM::TAG[:not_found]
@@ -11,7 +11,8 @@ class RPM_RPM_Tests < Test::Unit::TestCase
     #assert_raise(NameError) { RPM::LOG_ALERT }
 
     #require 'rpm/compat'
-    assert_nothing_raised { RPM::LOG_ALERT }
+    # Nothing should be raised by the following statement
+    RPM::LOG_ALERT
     assert_equal RPM::LOG_ALERT, RPM::LOG[:alert]
   end
 

@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'helper')
 
-class RPM_File_Tests < Test::Unit::TestCase
+class RPMFileTests < MiniTest::Test
   def test_link_to
     f = RPM::File.new("path", "md5sum", nil, 42, 1, 
                       "owner", "group", 43, 0777, 44, 45)
@@ -25,11 +25,11 @@ class RPM_File_Tests < Test::Unit::TestCase
     f.notinstalled?
     f.netshared?
 
-    assert_raise NotImplementedError do
+    assert_raises NotImplementedError do
       f.exclude?
     end
 
-    assert_raise NotImplementedError do
+    assert_raises NotImplementedError do
       f.donotuse?
     end
   end

@@ -2,7 +2,7 @@ require_relative('helper')
 require 'tmpdir'
 require 'pathname'
 
-class RPM_Transaction_Tests < Test::Unit::TestCase
+class RPMTransactionTests < MiniTest::Test
 
   PACKAGE_FILENAME = 'simple-1.0-0.i586.rpm'
 
@@ -101,7 +101,7 @@ class RPM_Transaction_Tests < Test::Unit::TestCase
       RPM.transaction(dir) do |t|
         begin
 
-          assert_raise TypeError do
+          assert_raises TypeError do
             t.delete(Object.new)
           end
 

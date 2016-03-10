@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'helper')
 
-class RPM_Lib_Tests < Test::Unit::TestCase
+class RPMLibTests < MiniTest::Test
 
   def test_lib_lib
     assert_kind_of String, RPM::C.RPMVERSION

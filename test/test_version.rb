@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'helper')
 
-class RPM_Version_Tests < Test::Unit::TestCase
+class RPMVersionTests < MiniTest::Test
   def setup
     @a = RPM::Version.new( '1.0.0-0.1m' )
     @b = RPM::Version.new( '0.9.0-1m' )
