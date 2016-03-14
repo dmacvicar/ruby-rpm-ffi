@@ -1,15 +1,12 @@
 sudo: required
-language: ruby
+services:
+  - docker
+
 before_install:
   - sudo apt-get update
-  - sudo apt-get install -y rpm
-  - sudo apt-get install -y -q locales
-  - sudo locale-gen es_ES.utf8
-  - sudo rpmdb --initdb
-rvm:
-  - 2.2.4
-  - 2.3.0
+  - sudo apt-get install -y rake
+
 script:
-  - gem install bundler
-  - rvmsudo bundle exec rake test
+  - rake docker_images
+  - rake docker_test
 
