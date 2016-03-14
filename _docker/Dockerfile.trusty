@@ -1,0 +1,6 @@
+FROM ubuntu:trusty
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q rpm locales ruby-ffi git-core ruby-bundler rake rdoc
+VOLUME /src
+WORKDIR /src
