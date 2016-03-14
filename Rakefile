@@ -23,10 +23,14 @@ begin
   end
 rescue LoadError
   STDERR.puts "Install yard if you want prettier docs"
-  require 'rdoc/task'
-  Rake::RDocTask.new(:doc) do |rdoc|
-    rdoc.rdoc_dir = "doc"
-    rdoc.title = "rpm for Ruby #{RPM::GEM_VERSION}"
-    extra_docs.each { |ex| rdoc.rdoc_files.include ex }
+  begin
+    require 'rdoc/task'
+    Rake::RDocTask.new(:doc) do |rdoc|
+      rdoc.rdoc_dir = "doc"
+      rdoc.title = "rpm for Ruby #{RPM::GEM_VERSION}"
+      extra_docs.each { |ex| rdoc.rdoc_files.include ex }
+    end
+  rescue LoadError
+    STDERR.puts "rdoc not available"
   end
 end
