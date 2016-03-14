@@ -68,7 +68,7 @@ class RPMTransactionTests < MiniTest::Unit::TestCase
         t.install(pkg, fixture(filename))
         t.commit
 
-        assert File.exist?(File.join(dir, '/var/lib/rpm/Packages')),
+        assert File.exist?(File.join(dir, RPM['_dbpath'], 'Packages')),
           "rpm db exists"
 
         assert !File.exist?('/usr/share/simple/README'),
@@ -86,7 +86,7 @@ class RPMTransactionTests < MiniTest::Unit::TestCase
           t.install(pkg, fixture(PACKAGE_FILENAME))
           t.commit
 
-          assert File.exist?(File.join(dir, '/var/lib/rpm/Packages')),
+          assert File.exist?(File.join(dir, RPM['_dbpath'], 'Packages')),
             "rpm db exists"
 
           assert File.exist?(File.join(dir, '/usr/share/simple/README')),
