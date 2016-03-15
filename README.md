@@ -108,7 +108,7 @@ In order to not damage your system, you can run the testsuite under docker:
 * Build the docker images:
 
 ```console
-rake docker_iamges
+rake docker_images
 ```
 
 * Run the testsuite under Docker
