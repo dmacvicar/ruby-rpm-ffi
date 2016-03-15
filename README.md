@@ -1,6 +1,8 @@
 
 # RPM bindings for ruby
 
+![maintained](https://img.shields.io/maintenance/yes/2016.svg) [![Build Status](https://travis-ci.org/dmacvicar/ruby-rpm-ffi.svg?branch=master)](https://travis-ci.org/dmacvicar/ruby-rpm-ffi)
+
 * http://github.com/dmacvicar/ruby-rpm
 
 # WARNING
