@@ -23,10 +23,30 @@ begin
   end
 rescue LoadError
   STDERR.puts "Install yard if you want prettier docs"
-  require 'rdoc/task'
-  Rake::RDocTask.new(:doc) do |rdoc|
-    rdoc.rdoc_dir = "doc"
-    rdoc.title = "rpm for Ruby #{RPM::GEM_VERSION}"
-    extra_docs.each { |ex| rdoc.rdoc_files.include ex }
+  begin
+    require 'rdoc/task'
+    Rake::RDocTask.new(:doc) do |rdoc|
+      rdoc.rdoc_dir = "doc"
+      rdoc.title = "rpm for Ruby #{RPM::GEM_VERSION}"
+      extra_docs.each { |ex| rdoc.rdoc_files.include ex }
+    end
+  rescue LoadError
+    STDERR.puts "rdoc not available"
+  end
+end
+
+task :docker_images do
+  Dir.chdir('_docker') do
+    Dir.glob('Dockerfile.*').each do |dockerfile|
+      tag = 'ruby-rpm-ffi:' + File.extname(dockerfile).delete('.')
+      sh %(docker build -f #{dockerfile} -t #{tag} .)
+    end
+  end
+end
+
+task :docker_test do
+  Dir.glob('_docker/Dockerfile.*').each do |dockerfile|
+    tag = 'ruby-rpm-ffi:' + File.extname(dockerfile).delete('.')
+    sh %(docker run -ti -v #{Dir.pwd}:/src #{tag} rake test)
   end
 end
