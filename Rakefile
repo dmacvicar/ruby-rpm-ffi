@@ -47,7 +47,6 @@ end
 task :docker_test do
   Dir.glob('_docker/Dockerfile.*').each do |dockerfile|
     tag = 'ruby-rpm-ffi:' + File.extname(dockerfile).delete('.')
-    sh "docker build -f #{dockerfile} -t #{tag} ."
     sh "docker run -ti -v #{Dir.pwd}:/src #{tag} rake test"
   end
 end
