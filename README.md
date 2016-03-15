@@ -127,7 +127,7 @@ rake docker_test
 
 ## API Checklist and TODO
 
-* RPM
+### RPM
 
 - [ ] RPM#expand
 - [X] RPM#[]
@@ -137,7 +137,7 @@ rake docker_test
 - [ ] RPM#verbosity
 - [ ] RPM#verbosity=
 
-* RPM::Package
+### RPM::Package
 
 - [X] Package#open
 - [X] Package#new
@@ -167,7 +167,7 @@ rake docker_test
 - [ ] Package#inspect
 - [ ] Package#copy_to
 
-* RPM::Dependency
+### RPM::Dependency
 
 - [X] Dependency#initialize
 - [X] Dependency#name
@@ -184,26 +184,30 @@ rake docker_test
 - [X] Dependency#versiontag
 - [X] Dependency#flagstag
 
-* RPM::Provide
+### RPM::Provide
+
 - [X] Provide#initialize
 
-* RPM::Require
+### RPM::Require
+
 - [X] Require#initialize
 - [ ] Require#pre?
 
-* RPM::Conflict
+### RPM::Conflict
+
 - [X] Conflict#initialize
 
-* RPM::Obsolete
+### RPM::Obsolete
+
 - [X] Obsolete#initialize
 
-* RPM::ChangeLog
+### RPM::ChangeLog
 
 - [X] ChangeLog#time
 - [X] ChangeLog#name
 - [X] ChangeLog#text
 
-* RPM::Version
+### RPM::Version
 
 - [X] Version (Comparable)
 - [X] Version#initialize
@@ -218,7 +222,7 @@ rake docker_test
 - [X] Version#inspect
 - [X] Version#hash
 
-* RPM::File
+### RPM::File
 
 - [X] File#initialize
 - [X] File#path
@@ -247,7 +251,7 @@ rake docker_test
 - [X] File#notinstalled?
 - [X] File#netshared?
 
-* RPM::DB
+### RPM::DB
 
 - [ ] DB (Enumerable)
 - [ ] DB#new
@@ -266,7 +270,7 @@ rake docker_test
 - [ ] DB#dup
 - [ ] DB#clone
 
-* RPM::MatchIterator
+### RPM::MatchIterator
 
 - [X] MatchIterator (Enumerable)
 - [X] MatchIterator#each
@@ -279,7 +283,7 @@ rake docker_test
 - [X] MatchIterator#get_iterator_count
 - [X] MatchIterator#length
 
-* RPM::Transaction
+### RPM::Transaction
 
 - [ ] Transaction#db
 - [ ] Transaction#script_file
@@ -296,7 +300,7 @@ rake docker_test
 - [ ] Transaction#dup
 - [ ] Transaction#clone
 
-* RPM::Source
+### RPM::Source
 
 - [ ] Source#initialize
 - [ ] Source#fullname
@@ -304,10 +308,11 @@ rake docker_test
 - [ ] Source#num
 - [ ] Source#no?
 
-* RPM::Patch
-* RPM::Icon
+### RPM::Patch
 
-* RPM::Spec
+### RPM::Icon
+
+### RPM::Spec
 
 - [ ] Spec#open
 - [ ] Spec#new
@@ -323,7 +328,7 @@ rake docker_test
 - [ ] Spec#dup
 - [ ] Spec#clone
 
-= LICENSE
+# LICENSE
 
 * Copyright © 2011 Duncan Mac-Vicar Prett <dmacvicar@suse.de>
 * Copyright © 2011 SUSE Linux Products GmbH
