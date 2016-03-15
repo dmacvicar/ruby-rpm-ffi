@@ -10,6 +10,7 @@ before_install:
   - sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" install docker-engine
   - sudo sh -c "echo 'DOCKER_OPTS=\"--storage-driver=devicemapper\"' >> /etc/default/docker"
   - sudo service docker restart
+  - docker info
   - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y dash rake
 
 script:
