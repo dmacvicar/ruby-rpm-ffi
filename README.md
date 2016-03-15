@@ -1,53 +1,60 @@
 
-= RPM bindings for ruby
+# RPM bindings for ruby
 
 * http://github.com/dmacvicar/ruby-rpm
 
-= WARNING
+# WARNING
 
 This is an alpha release! There is still work to be done
 
-= Quickstart
+# Quickstart
 
-== Working with RPM package files
+## Working with RPM package files
 
-    require 'rpm'
+```ruby
+require 'rpm'
 
-    pkg = RPM::Package.open("file.rpm")
-    pkg.arch => "x86_64"
+pkg = RPM::Package.open("file.rpm")
+pkg.arch => "x86_64"
 
-    pkg.files.each do |file|
-      puts file.path
-    end
+pkg.files.each do |file|
+  puts file.path
+end
 
-    pkg.changelog.each do |entry|
-      puts "#{entry.name} #{entry.time} #{entry.text}"
-    end
+pkg.changelog.each do |entry|
+  puts "#{entry.name} #{entry.time} #{entry.text}"
+end
+```
 
-== Querying the rpm database
+## Querying the rpm database
 
-    require 'rpm'    
+```ruby
+require 'rpm'
 
-    RPM.transaction do |ts|
-      ts.each do |pkg|
-        puts pkg
-      end
-    end
+RPM.transaction do |ts|
+  ts.each do |pkg|
+    puts pkg
+  end
+end
+```
 
-== Install a package
+## Install a package
 
-    require 'rpm'
-    pkg = RPM::Package.open('foo.rpm')
+```ruby
+require 'rpm'
 
-    RPM.transaction(rootdir) do |t|   
-      t.install(pkg, 'foo.rpm')
-      t.commit
-    end
+pkg = RPM::Package.open('foo.rpm')
 
-= Introduction
+RPM.transaction(rootdir) do |t|
+  t.install(pkg, 'foo.rpm')
+  t.commit
+end
+```
+
+## Introduction
 
 This library is a replacement for the ruby-rpm gem, originally
-writen by Kenta Murata around 2002 for the Kondara distribution. Later 
+writen by Kenta Murata around 2002 for the Kondara distribution. Later
 mantained by David Lutterkort and myself.
 
 Why?
@@ -71,7 +78,7 @@ This gem:
 As an example the code that implements RPM::Package was reduced
 from 1130 lines of code to 320.
 
-= Architecture
+# Architecture
 
 The gem is divided in two modules:
 
@@ -79,7 +86,7 @@ The gem is divided in two modules:
   Not all functions are attached, only the ones we actually use.
 * RPM:: contains the actual higher level API
 
-= Status, Compatibility and Differences with ruby-rpm
+# Status, Compatibility and Differences with ruby-rpm
 
 * Tested rpm 4.9 only
 * You can use symbols: instead of RPM::TAG_DESCRIPTION you
@@ -88,7 +95,37 @@ The gem is divided in two modules:
 * RPM::DB is not supported. Use RPM::Transaction
 * Spec and Source classes are not implemented yet
 
-== API Checklist and TODO
+## TESTING
+
+Unit tests can be run using the `rake test` command.
+
+### Docker tests
+
+In order to not damage your system, you can run the testsuite under docker:
+
+* Build the docker images:
+
+```console
+rake docker_iamges
+```
+
+* Run the testsuite under Docker
+
+```console
+rake docker_test
+```
+
+## TODO
+
+* Check Package#signature should return String?
+    => ruby-rpm seems to return symbol
+* Food for thought: Package dependencies and changelog
+  methods could just use []. Calling headerGet directly saves
+  us from doing one iteration per attribute
+* Not sure if Spec can be implemented as it was before with
+  newer rpms.
+
+## API Checklist and TODO
 
 * RPM
 
@@ -285,25 +322,6 @@ The gem is divided in two modules:
     [ ] Spec#expand_macros
     [ ] Spec#dup
     [ ] Spec#clone
-
-
-== TESTING
-
-Unit tests can be run using the `rake test` command.
-
-However some tests have to be run as root user in order to pass. These tests
-lead the `rpm` library to use the `chroot` command, which can be executed only
-by root user.
-
-== TODO
-
-* Check Package#signature should return String?
-    => ruby-rpm seems to return symbol
-* Food for thought: Package dependencies and changelog
-  methods could just use []. Calling headerGet directly saves
-  us from doing one iteration per attribute
-* Not sure if Spec can be implemented as it was before with 
-  newer rpms.
 
 = LICENSE
 
