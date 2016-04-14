@@ -22,6 +22,8 @@ module RPM
     attr_accessor :group
     # @return [Number] Device type of the file
     attr_accessor :mode
+    # @return [Number] Inode number of the file
+    attr_accessor :inode
 
     attr_accessor :attr
     attr_accessor :state
@@ -117,7 +119,7 @@ module RPM
       ! (@attr & RPM::C::FileState[:netshared]).zero?
     end
 
-    def initialize(path, md5sum, link_to, size, mtime, owner, group, rdev, mode, attr, state)
+    def initialize(path, md5sum, link_to, size, mtime, owner, group, rdev, mode, inode, attr, state)
       @path = path
       @md5sum = md5sum
       # If link_to is "" save it as nil
@@ -128,6 +130,7 @@ module RPM
       @group = group
       @rdev = rdev
       @mode = mode
+      @inode = inode
       @attr = attr
       @state = state
     end
