@@ -49,7 +49,7 @@ module RPM
         ) != 0
       else
         raise(TypeError, "#{other} is not a Version or Dependency")
-        end
+      end
     end
 
     # @return [Boolean] true if '<' or '=<' are used to compare the version

@@ -1,3 +1,4 @@
+# coding: utf-8
 
 module RPM
   class File
@@ -129,5 +130,5 @@ module RPM
       @attr = attr
       @state = state
     end
-end
+  end
 end

@@ -142,7 +142,7 @@ class RPMTransactionTests < MiniTest::Unit::TestCase
                  when :inst_open_file then
                    @f = File.open(data.key, 'r')
                  when :inst_close_file then @f.close
-            end
+                 end
           end
 
           assert File.exist?(File.join(dir, '/usr/share/simple/README')),

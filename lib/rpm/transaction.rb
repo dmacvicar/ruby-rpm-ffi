@@ -93,7 +93,7 @@ module RPM
                    each_match(:label, pkg.name).set_iterator_version(pkg.version)
                  else
                    raise TypeError, 'illegal argument type'
-      end
+                 end
 
       iterator.each do |header|
         ret = RPM::C.rpmtsAddEraseElement(@ptr, header.ptr, iterator.offset)

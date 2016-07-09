@@ -231,13 +231,13 @@ module RPM
                     when :int8_type, :char_type, :int16_type, :int32_type, :int64_type then :rpmtdGetNumber
                     when :string_type, :string_array_type, :bin_type then :rpmtdGetString
                     else raise NotImplementedError, "Don't know how to retrieve type '#{type}'"
-      end
+                    end
 
       is_array = if count > 1 then true
                  elsif ret_type == :array_return_type then true
                  elsif type == :string_array_type then true
                  else false
-      end
+                 end
 
       if is_array
         ret = []
