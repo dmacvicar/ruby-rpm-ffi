@@ -3,7 +3,6 @@ require 'ffi'
 
 module RPM
   module C
-
     extend ::FFI::Library
 
     begin
@@ -15,7 +14,6 @@ module RPM
         "Can't find rpm libs on your system: #{e.message}"
       )
     end
-
   end
 end
 
@@ -39,11 +37,9 @@ require 'rpm/c/rpmtd'
 
 module RPM
   module C
-
     def self.rpm_version_code
       ver = ::RPM::C.RPMVERSION.split('.', 3)
-      return (ver[0].to_i<<16) + (ver[1].to_i<<8) + (ver[2].to_i<<0)
+      (ver[0].to_i << 16) + (ver[1].to_i << 8) + (ver[2].to_i << 0)
     end
-
   end
 end

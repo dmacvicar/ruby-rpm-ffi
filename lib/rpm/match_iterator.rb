@@ -1,8 +1,6 @@
 
 module RPM
-
   class MatchIterator
-
     include Enumerable
 
     # @visibility private
@@ -28,13 +26,11 @@ module RPM
 
     def next_iterator
       pkg_ptr = RPM::C.rpmdbNextIterator(@ptr)
-        if !pkg_ptr.null?
-          return RPM::Package.new(pkg_ptr)
-        end
-        return nil;
+      return RPM::Package.new(pkg_ptr) unless pkg_ptr.null?
+      nil
     end
 
-    # @ return header join key for current position of rpm 
+    # @ return header join key for current position of rpm
     # database iterator
     def offset
       RPM::C.rpmdbGetIteratorOffset(@ptr)
@@ -46,28 +42,25 @@ module RPM
       self
     end
 
-    alias :regexp :set_iterator_re
+    alias regexp set_iterator_re
 
     def set_iterator_version(version)
-      if not version.is_a?(RPM::Version)
+      unless version.is_a?(RPM::Version)
         raise TypeError, 'illegal argument type'
       end
 
       set_iterator_re(:version, :default, version.v)
-      if (version.r)
-        set_iterator_re(:release, :default, version.r)
-      end
+      set_iterator_re(:release, :default, version.r) if version.r
       self
     end
 
-    alias :version :set_iterator_version
-    
+    alias version set_iterator_version
+
     def get_iterator_count
       RPM::C.rpmdbGetIteratorCount(@ptr)
     end
 
-    alias :count :get_iterator_count
-    alias :length :get_iterator_count
-
+    alias count get_iterator_count
+    alias length get_iterator_count
   end
 end

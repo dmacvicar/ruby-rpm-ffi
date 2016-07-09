@@ -1,24 +1,20 @@
 require 'rpm'
 
 module RPM
-
   CallbackData = Struct.new(:type, :key, :package, :amount, :total) do
-
-
     def to_s
       "#{type} #{key} #{package} #{amount} #{total}"
     end
   end
 
   class Transaction
-
     def self.release(ptr)
       RPM::C.rpmtsFree(ptr)
     end
 
-    def initialize(opts={})
+    def initialize(opts = {})
       # http://markmail.org/message/ypsiqxop442p7rzz
-      # The key pointer needs to stay valid during commit 
+      # The key pointer needs to stay valid during commit
       # so we keep a reference to them mapping from
       # object_id to ruby object.
       @keys = {}
@@ -30,18 +26,16 @@ module RPM
 
     # @return [RPM::MatchIterator] Creates an iterator for +tag+ and +val+
     def init_iterator(tag, val)
-      raise TypeError if (val && !val.is_a?(String))
+      raise TypeError if val && !val.is_a?(String)
 
       it_ptr = RPM::C.rpmtsInitIterator(@ptr, tag.nil? ? 0 : tag, val, 0)
 
       raise "Can't init iterator for [#{tag}] -> '#{val}'" if it_ptr.null?
-      return MatchIterator.from_ptr(it_ptr)
+      MatchIterator.from_ptr(it_ptr)
     end
 
     # @visibility private
-    def ptr
-      @ptr
-    end
+    attr_reader :ptr
 
     #
     # @yield [Package] Called for each match
@@ -77,33 +71,33 @@ module RPM
     # @param [Package] pkg Package to install
     # @param [String] key e.g. filename where to install from
     def install(pkg, key)
-      install_element(pkg, key, :upgrade => false)
+      install_element(pkg, key, upgrade: false)
     end
 
     # Add an upgrade operation to the transaction
     # @param [Package] pkg Package to upgrade
     # @param [String] key e.g. filename where to install from
     def upgrade(pkg, key)
-      install_element(pkg, key, :upgrade => true)
+      install_element(pkg, key, upgrade: true)
     end
 
     # Add a delete operation to the transaction
     # @param [String, Package, Dependency] pkg Package to delete
     def delete(pkg)
       iterator = case pkg
-      when Package
-        pkg[:sigmd5] ? each_match(:sigmd5, pkg[:sigmd5]) : each_match(:label, pkg[:label])
-      when String
-        each_match(:label, pkg)
-      when Dependency
-        each_match(:label, pkg.name).set_iterator_version(pkg.version)
-      else
-        raise TypeError, "illegal argument type"
+                 when Package
+                   pkg[:sigmd5] ? each_match(:sigmd5, pkg[:sigmd5]) : each_match(:label, pkg[:label])
+                 when String
+                   each_match(:label, pkg)
+                 when Dependency
+                   each_match(:label, pkg.name).set_iterator_version(pkg.version)
+                 else
+                   raise TypeError, 'illegal argument type'
       end
 
       iterator.each do |header|
         ret = RPM::C.rpmtsAddEraseElement(@ptr, header.ptr, iterator.offset)
-        raise RuntimeError, "Error while adding erase/#{pkg} to transaction" if ret != 0
+        raise "Error while adding erase/#{pkg} to transaction" if ret != 0
       end
     end
 
@@ -150,7 +144,7 @@ module RPM
       return if rc < 0
       begin
         psi = RPM::C.rpmpsInitIterator(probs)
-        while (RPM::C.rpmpsNextIterator(psi) >= 0)
+        while RPM::C.rpmpsNextIterator(psi) >= 0
           problem = Problem.from_ptr(RPM::C.rpmpsGetProblem(psi))
           yield problem
         end
@@ -170,20 +164,19 @@ module RPM
     #   end
     # end
     # @yield [CallbackData] sig Transaction progress
-    def commit(&user_callback)
+    def commit
       flags = RPM::C::TransFlags[:none]
 
-      callback = Proc.new do |hdr, type, amount, total, key_ptr, data_ignored|
+      callback = proc do |hdr, type, amount, total, key_ptr, data_ignored|
         key_id = key_ptr.address
         key = @keys.include?(key_id) ? @keys[key_id] : nil
 
-        case
-          when block_given?
-            package = hdr.null? ? nil : Package.new(hdr)
-            data = CallbackData.new(type, key, package, amount, total)
-            user_callback.call(data)
-          else
-            RPM::C.rpmShowProgress(hdr, type, amount, total, key, data_ignored)
+        if block_given?
+          package = hdr.null? ? nil : Package.new(hdr)
+          data = CallbackData.new(type, key, package, amount, total)
+          yield(data)
+        else
+          RPM::C.rpmShowProgress(hdr, type, amount, total, key, data_ignored)
         end
       end
       # We create a callback to pass to the C method and we
@@ -192,45 +185,44 @@ module RPM
       # The C callback expects you to return a file handle,
       # We expect from the user to get a File, which we
       # then convert to a file handle to return.
-      callback = Proc.new do |hdr, type, amount, total, key_ptr, data_ignored|
+      callback = proc do |hdr, type, amount, total, key_ptr, data_ignored|
         key_id = key_ptr.address
         key = @keys.include?(key_id) ? @keys[key_id] : nil
 
-        case
-          when block_given?
-            package = hdr.null? ? nil : Package.new(hdr)
-            data = CallbackData.new(type, key, package, amount, total)
-            ret = user_callback.call(data)
+        if block_given?
+          package = hdr.null? ? nil : Package.new(hdr)
+          data = CallbackData.new(type, key, package, amount, total)
+          ret = yield(data)
 
-            # For OPEN_FILE we need to do some type conversion
-            # for certain callback types we need to do some
-            case type
-              when :inst_open_file
-                # For :inst_open_file the user callback has to
-                # return the open file
-                if !ret.is_a?(::File)
-                  raise TypeError, "illegal return value type #{ret.class}. Expected File."
-                end
-                fdt = RPM::C.fdDup(ret.to_i)
-                if (fdt.null? || RPM::C.Ferror(fdt) != 0)
-                  raise RuntimeError, "Can't use opened file #{data.key}: #{RPM::C.Fstrerror(fdt)}"
-                  RPM::C.Fclose(fdt) if not fdt.nil?
-                else
-                  fdt = RPM::C.fdLink(fdt)
-                  @fdt = fdt
-                end
-                # return the (RPM type) file handle
-                fdt
-              when :inst_close_file
-                fdt = @fdt
-                RPM::C.Fclose(fdt)
-                @fdt = nil
-              else
-                ret
+          # For OPEN_FILE we need to do some type conversion
+          # for certain callback types we need to do some
+          case type
+          when :inst_open_file
+            # For :inst_open_file the user callback has to
+            # return the open file
+            unless ret.is_a?(::File)
+              raise TypeError, "illegal return value type #{ret.class}. Expected File."
             end
+            fdt = RPM::C.fdDup(ret.to_i)
+            if fdt.null? || RPM::C.Ferror(fdt) != 0
+              raise "Can't use opened file #{data.key}: #{RPM::C.Fstrerror(fdt)}"
+              RPM::C.Fclose(fdt) unless fdt.nil?
+            else
+              fdt = RPM::C.fdLink(fdt)
+              @fdt = fdt
+            end
+            # return the (RPM type) file handle
+            fdt
+          when :inst_close_file
+            fdt = @fdt
+            RPM::C.Fclose(fdt)
+            @fdt = nil
           else
-            # No custom callback given, use the default to show progress
-            RPM::C.rpmShowProgress(hdr, type, amount, total, key, data_ignored)
+            ret
+          end
+        else
+          # No custom callback given, use the default to show progress
+          RPM::C.rpmShowProgress(hdr, type, amount, total, key, data_ignored)
         end
       end
 
@@ -244,7 +236,7 @@ module RPM
       if rc > 0
         ps = RPM::C.rpmtsProblems(@ptr)
         psi = RPM::C.rpmpsInitIterator(ps)
-        while (RPM::C.rpmpsNextIterator(psi) >= 0)
+        while RPM::C.rpmpsNextIterator(psi) >= 0
           problem = Problem.from_ptr(RPM::C.rpmpsGetProblem(psi))
           STDERR.puts problem
         end
@@ -263,8 +255,8 @@ module RPM
     # @param [String] key e.g. filename where to install from
     # @param opts options
     #   @option :upgrade Upgrade packages if true
-    def install_element(pkg, key, opts={})
-      raise TypeError, "illegal argument type" if not pkg.is_a?(RPM::Package)
+    def install_element(pkg, key, opts = {})
+      raise TypeError, 'illegal argument type' unless pkg.is_a?(RPM::Package)
       raise ArgumentError, "#{self}: key '#{key}' must be unique" if @keys.include?(key.object_id)
 
       # keep a reference to the key as rpmtsAddInstallElement will keep a copy
@@ -275,7 +267,5 @@ module RPM
       raise RuntimeError if ret != 0
       nil
     end
-
   end
-
 end

@@ -1,7 +1,5 @@
 module RPM
-
   module C
-
     typedef :pointer, :rpmtd
 
     attach_function 'rpmtdNew', [], :pointer
@@ -32,6 +30,5 @@ module RPM
     attach_function 'rpmtdFromString', [:rpmtd, :rpmTagVal, :string], :int
     attach_function 'rpmtdFromStringArray', [:rpmtd, :rpmTagVal, :pointer, :rpm_count_t], :int
     # ...
-
   end
 end

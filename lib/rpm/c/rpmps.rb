@@ -1,7 +1,5 @@
 module RPM
-
   module C
-
     typedef :pointer, :rpmps
     typedef :pointer, :rpmpsi
 

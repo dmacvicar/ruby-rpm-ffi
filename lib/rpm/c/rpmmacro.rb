@@ -1,8 +1,6 @@
 
 module RPM
-
   module C
-
     attach_variable :MACROFILES, :macrofiles, :string
     # ...
 
@@ -25,5 +23,4 @@ module RPM
     attach_function 'rpmInitMacros', [:pointer, :string], :void
     # ...
   end
-  
 end

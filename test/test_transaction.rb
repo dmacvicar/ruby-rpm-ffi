@@ -3,8 +3,7 @@ require 'tmpdir'
 require 'pathname'
 
 class RPMTransactionTests < MiniTest::Unit::TestCase
-
-  PACKAGE_FILENAME = 'simple-1.0-0.i586.rpm'
+  PACKAGE_FILENAME = 'simple-1.0-0.i586.rpm'.freeze
 
   def test_flags
     RPM.transaction do |t|
@@ -18,25 +17,25 @@ class RPMTransactionTests < MiniTest::Unit::TestCase
     RPM.transaction do |t|
       it = t.init_iterator(nil, nil)
       assert_kind_of RPM::MatchIterator, it
-      #assert it.count > 0
+      # assert it.count > 0
     end
 
     RPM.transaction do |t|
       it = t.init_iterator(nil, nil)
       it.regexp(:name, :glob, '*audio*')
       it.each do |pkg|
-        assert pkg.name.include?("audio"), "'#{pkg.name}' contains 'audio'"
+        assert pkg.name.include?('audio'), "'#{pkg.name}' contains 'audio'"
       end
     end
   end
 
-  # FIXME this is not working
+  # FIXME: this is not working
   def test_iterator_version
     RPM.transaction do |t|
       it = t.init_iterator(nil, nil)
       it.version(RPM::Version.new('2.1'))
       it.each do |sig|
-        # FIXME check that this worked
+        # FIXME: check that this worked
       end
     end
   end
@@ -44,9 +43,9 @@ class RPMTransactionTests < MiniTest::Unit::TestCase
   def test_basic_transaction_setters
     Dir.mktmpdir do |dir|
       RPM.transaction do |t|
-        assert_equal "/", t.root_dir
+        assert_equal '/', t.root_dir
         t.root_dir = dir
-        assert_equal  dir + '/', t.root_dir
+        assert_equal dir + '/', t.root_dir
       end
     end
 
@@ -63,16 +62,15 @@ class RPMTransactionTests < MiniTest::Unit::TestCase
 
     Dir.mktmpdir do |dir|
       RPM.transaction(dir) do |t|
-
         t.flags = RPM::TRANS_FLAG_TEST
         t.install(pkg, fixture(filename))
         t.commit
 
         assert File.exist?(File.join(dir, RPM['_dbpath'], 'Packages')),
-          "rpm db exists"
+               'rpm db exists'
 
         assert !File.exist?('/usr/share/simple/README'),
-          "package #{pkg} was not installed"
+               "package #{pkg} was not installed"
       end
     end
   end
@@ -87,10 +85,10 @@ class RPMTransactionTests < MiniTest::Unit::TestCase
           t.commit
 
           assert File.exist?(File.join(dir, RPM['_dbpath'], 'Packages')),
-            "rpm db exists"
+                 'rpm db exists'
 
           assert File.exist?(File.join(dir, '/usr/share/simple/README')),
-            "package #{pkg} should be installed"
+                 "package #{pkg} should be installed"
         ensure
           # Force close so that RPM does not try to do it
           # when the tmpdir is deleted
@@ -113,7 +111,7 @@ class RPMTransactionTests < MiniTest::Unit::TestCase
           t.commit
 
           assert !File.exist?(File.join(dir, '/usr/share/simple/README')),
-            "package #{pkg} should not be installed"
+                 "package #{pkg} should not be installed"
 
         ensure
           # Force close so that RPM does not try to do it
@@ -121,7 +119,6 @@ class RPMTransactionTests < MiniTest::Unit::TestCase
           t.db.close
         end
       end
-
     end
   end
 
@@ -142,14 +139,14 @@ class RPMTransactionTests < MiniTest::Unit::TestCase
 
           t.commit do |data|
             next case data.type
-              when :inst_open_file then
-                @f = File.open(data.key, 'r')
-              when :inst_close_file then @f.close
+                 when :inst_open_file then
+                   @f = File.open(data.key, 'r')
+                 when :inst_close_file then @f.close
             end
           end
 
           assert File.exist?(File.join(dir, '/usr/share/simple/README')),
-            "package #{pkg} should be installed"
+                 "package #{pkg} should be installed"
         ensure
           # Force close so that RPM does not try to do it
           # when the tmpdir is deleted
@@ -158,5 +155,4 @@ class RPMTransactionTests < MiniTest::Unit::TestCase
       end
     end
   end
-
 end

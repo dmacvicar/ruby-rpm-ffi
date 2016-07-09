@@ -1,8 +1,6 @@
 
 module RPM
-
   module C
-    
     attach_variable :RPMVERSION, :RPMVERSION, :string
     attach_variable :RPMEVR, :rpmEVR, :string
 
@@ -10,6 +8,5 @@ module RPM
 
     # ...
     attach_function 'rpmvercmp', [:string, :string], :int
-        
   end
 end

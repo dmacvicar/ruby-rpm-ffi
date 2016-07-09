@@ -2,17 +2,17 @@ require File.join(File.dirname(__FILE__), 'helper')
 
 class RPMFileTests < MiniTest::Unit::TestCase
   def test_link_to
-    f = RPM::File.new("path", "md5sum", nil, 42, 1, 
-                      "owner", "group", 43, 0777, 44, 45)
+    f = RPM::File.new('path', 'md5sum', nil, 42, 1,
+                      'owner', 'group', 43, 0o777, 44, 45)
     assert_equal(nil, f.link_to)
-    f = RPM::File.new("path", "md5sum", "link_to", 42, 1, 
-                      "owner", "group", 43, 0777, 44, 45)
-    assert_equal("link_to", f.link_to)
+    f = RPM::File.new('path', 'md5sum', 'link_to', 42, 1,
+                      'owner', 'group', 43, 0o777, 44, 45)
+    assert_equal('link_to', f.link_to)
   end
 
   def test_flags
-    f = RPM::File.new("path", "md5sum", nil, 42, 1, 
-                      "owner", "group", 43, 0777, 44, 45)
+    f = RPM::File.new('path', 'md5sum', nil, 42, 1,
+                      'owner', 'group', 43, 0o777, 44, 45)
     f.config?
     f.doc?
     f.is_missingok?
@@ -33,6 +33,4 @@ class RPMFileTests < MiniTest::Unit::TestCase
       f.donotuse?
     end
   end
-
-
 end

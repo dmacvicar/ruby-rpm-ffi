@@ -1,9 +1,7 @@
 
 module RPM
-
   module C
-
-     # rpmlog
+    # rpmlog
     RPMLOG_PRIMASK = 0x07
 
     Log = enum(
@@ -21,6 +19,5 @@ module RPM
     # TODO: defines to set verbosity
     # ...
     attach_function 'rpmlogMessage', [], :string
-
   end
 end

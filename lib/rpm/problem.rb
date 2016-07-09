@@ -1,8 +1,6 @@
 
 module RPM
-
   class Problem
-
     def self.release(ptr)
       RPM::C.rpmProblemFree(ptr)
     end
@@ -13,14 +11,14 @@ module RPM
     # @return [RPM::Problem] wrapped object
     def self.from_ptr(ptr)
       case ptr
-        when FFI::Pointer
-          new(FFI::AutoPointer.new(RPM::C.rpmProblemLink(ptr), Problem.method(:release)))
-        else
-          raise "Can't initialize header with '#{ptr}'"
+      when FFI::Pointer
+        new(FFI::AutoPointer.new(RPM::C.rpmProblemLink(ptr), Problem.method(:release)))
+      else
+        raise "Can't initialize header with '#{ptr}'"
       end
     end
 
-    # Create a problem item. 
+    # Create a problem item.
     # @param [RPM::ProblemType] type problem type
     # @param [String] pkg_nver name-version-edition-release of the related package
     # @param [String] key key of the related package
@@ -36,17 +34,17 @@ module RPM
       @ptr = ptr
     end
 
-    # @return [RPM::ProblemType] type of problem (dependency, diskpace etc). 
+    # @return [RPM::ProblemType] type of problem (dependency, diskpace etc).
     def type
       RPM::C.rpmProblemGetType(@ptr)
     end
 
-    # @return [String] filename or python object address of a problem. 
+    # @return [String] filename or python object address of a problem.
     def key
       RPM::C.rpmProblemGetKey(@ptr).read_string
     end
 
-    # @return [String] a generic data string from a problem. 
+    # @return [String] a generic data string from a problem.
     def str
       RPM::C.rpmProblemGetStr(@ptr)
     end
@@ -56,16 +54,12 @@ module RPM
       RPM::C.rpmProblemString(@ptr)
     end
 
-    # @return [Fixnum] compare two problems for equality. 
+    # @return [Fixnum] compare two problems for equality.
     def <=>(other)
       RPM::C.rpmProblemCompare(@ptr, other.ptr)
     end
 
     # @visibility private
-    def ptr
-      @ptr
-    end
-
+    attr_reader :ptr
   end
-
 end

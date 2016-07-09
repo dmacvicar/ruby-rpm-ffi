@@ -10,7 +10,6 @@ require 'rpm/dependency'
 require 'rpm/utils'
 
 module RPM
-
   TAG = RPM::C::Tag
   LOG = RPM::C::Log
   SENSE = RPM::C::Sense
@@ -31,19 +30,17 @@ module RPM
   #   end
   #
   def self.transaction(root = '/')
-    begin
-      ts = Transaction.new
-      ts.root_dir = root
-      yield ts
-    ensure
-      ts.ptr.free
-    end
+    ts = Transaction.new
+    ts.root_dir = root
+    yield ts
+  ensure
+    ts.ptr.free
   end
 
   # @param [String] name Name of the macro
   # @return [String] value of macro +name+
   def self.[](name)
-    val = String.new
+    val = ''
     buffer = ::FFI::MemoryPointer.new(:pointer, 1024)
     buffer.write_string("%{#{name}}")
     ret = RPM::C.expandMacros(nil, nil, buffer, 1024)
@@ -57,10 +54,9 @@ module RPM
     if value.nil?
       RPM::C.delMacro(nil, name.to_s)
     else
-      RPM::C.addMacro(nil, name.to_s, "", value.to_s, RPM::C::RMIL_DEFAULT)
+      RPM::C.addMacro(nil, name.to_s, '', value.to_s, RPM::C::RMIL_DEFAULT)
     end
   end
-
 end
 
 RPM::C.rpmReadConfigFiles(nil, nil)

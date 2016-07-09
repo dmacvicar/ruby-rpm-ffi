@@ -1,7 +1,6 @@
 require File.join(File.dirname(__FILE__), 'helper')
 
 class RPMLibTests < MiniTest::Unit::TestCase
-
   def test_lib_lib
     assert_kind_of String, RPM::C.RPMVERSION
     # "x.y.z"
@@ -18,19 +17,17 @@ class RPMLibTests < MiniTest::Unit::TestCase
 
   def test_lib_ts
     ts = RPM::C.rpmtsCreate
-    RPM::C.rpmtsSetRootDir(ts, "/")
+    RPM::C.rpmtsSetRootDir(ts, '/')
     it = RPM::C.rpmtsInitIterator(ts, 0, nil, 0)
     hdrs = []
-    while (not (hdr = RPM::C.rpmdbNextIterator(it)).null?)
+    until (hdr = RPM::C.rpmdbNextIterator(it)).null?
       hdrs << hdr
       assert_kind_of String, RPM::C.headerGetAsString(hdr, :name)
     end
     RPM::C.rpmdbFreeIterator(it)
-
   end
 
   def test_lib_macros
     assert_kind_of String, RPM::C.MACROFILES
   end
-
 end

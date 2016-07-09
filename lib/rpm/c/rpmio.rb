@@ -1,6 +1,5 @@
 module RPM
   module C
-
     typedef :pointer, :FD_t
     # RPMIO
     attach_function 'Fstrerror', [:FD_t], :string
@@ -16,6 +15,5 @@ module RPM
     attach_function 'Fstrerror', [:FD_t], :string
 
     attach_function 'fdLink', [:pointer], :FD_t
-
   end
 end

@@ -1,18 +1,16 @@
 require 'fcntl'
 
 module RPM
-
   class DB
-
     include Enumerable
 
     # @visibility private
     # @param ts [Transaction] transaction object
-    def initialize(ts, opts={})
+    def initialize(ts, opts = {})
       opts[:writable] ||= false
 
       @ts = ts
-      RPM::C.rpmtsOpenDB(@ts.ptr, opts[:writable] ? Fcntl::O_RDWR | Fcntl::O_CREAT : Fcntl::O_RDONLY )
+      RPM::C.rpmtsOpenDB(@ts.ptr, opts[:writable] ? Fcntl::O_RDWR | Fcntl::O_CREAT : Fcntl::O_RDONLY)
     end
 
     # @return [RPM::MatchIterator] Creates an iterator for +tag+ and +val+
@@ -73,12 +71,12 @@ module RPM
     #     puts pkg.name
     #   end
     #
-    def self.open(writable=false, root='/', &block)
-      open_for_transaction(Transaction.new(:root => root), :writable => false, &block)
+    def self.open(_writable = false, root = '/', &block)
+      open_for_transaction(Transaction.new(root: root), writable: false, &block)
     end
 
     # @visibility private
-    def self.open_for_transaction(ts, opts={})
+    def self.open_for_transaction(ts, opts = {})
       db = new(ts, opts)
       return db unless block_given?
 
@@ -89,8 +87,7 @@ module RPM
       end
     end
 
-
-    # @deprecated Not possible to get home value in 
+    # @deprecated Not possible to get home value in
     #   newer RPM versions
     def home
       raise NotImplementedError
@@ -117,9 +114,5 @@ module RPM
     # database
     def count_packages(name)
     end
-
-    
-
   end
-
 end

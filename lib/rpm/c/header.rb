@@ -1,16 +1,14 @@
 
 module RPM
-
   module C
-
     typedef :pointer, :header
 
     attach_function 'headerNew', [], :header
     attach_function 'headerFree', [:header], :header
     attach_function 'headerLink', [:header], :header
     # ..
-    HEADERGET_DEFAULT   = 0,        
-    HEADERGET_MINMEM    = (1 << 0)
+    HEADERGET_DEFAULT   = [0,
+                           HEADERGET_MINMEM = (1 << 0)].freeze
     HEADERGET_EXT       = (1 << 1)
     HEADERGET_RAW       = (1 << 2)
     HEADERGET_ALLOC     = (1 << 3)
@@ -31,7 +29,5 @@ module RPM
     attach_function 'headerPutUint32', [:header, :rpmTagVal, :pointer, :rpm_count_t], :int
     # ...
     attach_function 'rpmReadPackageFile', [:header, :FD_t, :string, :pointer], Rc
-
   end
-
 end

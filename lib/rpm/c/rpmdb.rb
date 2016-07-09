@@ -1,15 +1,13 @@
 module RPM
-
   module C
-
     typedef :pointer, :rpmdb
     typedef :pointer, :rpmdbMatchIterator
 
     RegexpMode = enum(:rpmMireMode, [
-      :default, :strcmp, :regex, :glob
-    ])
+                        :default, :strcmp, :regex, :glob
+                      ])
 
-    attach_function 'rpmdbCountPackages', [:rpmdb, :string],  :int
+    attach_function 'rpmdbCountPackages', [:rpmdb, :string], :int
     attach_function 'rpmdbGetIteratorOffset', [:rpmdbMatchIterator], :uint
     attach_function 'rpmdbGetIteratorCount', [:rpmdbMatchIterator], :int
     attach_function 'rpmdbSetIteratorRE', [:rpmdbMatchIterator, :rpmTagVal, :rpmMireMode, :string], :int

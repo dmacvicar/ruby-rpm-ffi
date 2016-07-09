@@ -1,22 +1,19 @@
 require File.join(File.dirname(__FILE__), 'helper')
 
 class RPMHeaderTests < MiniTest::Unit::TestCase
-
   def test_create
-
     pkg = RPM::Package.create('foo', RPM::Version.new('1.0'))
     assert_equal 'foo', pkg.name
     assert_equal '(none)', pkg.signature
   end
 
   def test_open
-
     pkg = RPM::Package.open(fixture('simple-1.0-0.i586.rpm'))
 
-    req = RPM::Require.new("simple", RPM::Version.new("1.0", "0"), RPM::SENSE_GREATER|RPM::SENSE_EQUAL, nil)
+    req = RPM::Require.new('simple', RPM::Version.new('1.0', '0'), RPM::SENSE_GREATER | RPM::SENSE_EQUAL, nil)
     assert req.satisfy?(pkg)
 
-    assert_equal "simple-1.0-0-i586", pkg.to_s
+    assert_equal 'simple-1.0-0-i586', pkg.to_s
 
     assert_equal '3b5f9d468c877166532c662e29f43bc3', pkg.signature
 
@@ -39,24 +36,24 @@ class RPMHeaderTests < MiniTest::Unit::TestCase
     ENV['LC_ALL'] = backup_lang
 
     # Arrays
-    assert_equal ["root", "root"], pkg[:fileusername]
+    assert_equal %w(root root), pkg[:fileusername]
     assert_equal [6, 5], pkg[:filesizes]
 
-    assert pkg.provides.map(&:name).include?("simple(x86-32)")
-    assert pkg.provides.map(&:name).include?("simple")
+    assert pkg.provides.map(&:name).include?('simple(x86-32)')
+    assert pkg.provides.map(&:name).include?('simple')
 
-    assert pkg.files.map(&:path).include?("/usr/share/simple/README")
-    assert pkg.files.map(&:path).include?("/usr/share/simple/README.es")
+    assert pkg.files.map(&:path).include?('/usr/share/simple/README')
+    assert pkg.files.map(&:path).include?('/usr/share/simple/README.es')
 
     assert pkg.conflicts.empty?
     assert pkg.requires.map(&:name).include?('rpmlib(PayloadIsLzma)')
     assert pkg.obsoletes.empty?
 
-    file = pkg.files.select {|x| x.path == "/usr/share/simple/README" }.first
+    file = pkg.files.select { |x| x.path == '/usr/share/simple/README' }.first
     assert_nil file.link_to
     assert !file.symlink?
 
-    assert_equal ["- Fix something", "- Fix something else"], pkg.changelog.map(&:text)
+    assert_equal ['- Fix something', '- Fix something else'], pkg.changelog.map(&:text)
   end
 
   def test_dependencies
@@ -66,8 +63,8 @@ class RPMHeaderTests < MiniTest::Unit::TestCase
     assert pkg.provides.map(&:name).include?('simple_with_deps(x86-32)')
     assert pkg.provides.map(&:name).include?('simple_with_deps')
 
-    assert pkg.requires.map(&:name).include?("a")
-    b = pkg.requires.find {|x| x.name == 'b'}
+    assert pkg.requires.map(&:name).include?('a')
+    b = pkg.requires.find { |x| x.name == 'b' }
     assert b
     assert_equal '1.0', b.version.to_s
 
@@ -75,7 +72,5 @@ class RPMHeaderTests < MiniTest::Unit::TestCase
     assert pkg.conflicts.map(&:name).include?('d')
 
     assert pkg.obsoletes.map(&:name).include?('f')
-
   end
-
 end

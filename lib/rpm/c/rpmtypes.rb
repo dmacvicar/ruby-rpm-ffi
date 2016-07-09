@@ -1,9 +1,7 @@
 
 module RPM
-
   module C
-
-  	Rc = enum(
+    Rc = enum(
       :ok, 0,
       :notfound, 1,
       :fail, 2,
@@ -12,9 +10,9 @@ module RPM
     )
 
     typedef :int32, :rpm_tag_t
-    typedef :uint32, :rpm_tagtype_t;
+    typedef :uint32, :rpm_tagtype_t
     typedef :uint32, :rpm_count_t
-    typedef :rpm_tag_t, :rpmTagVal;
+    typedef :rpm_tag_t, :rpmTagVal
     typedef :rpm_tag_t, :rpmDbiTagVal
 
     typedef :uint32, :rpmFlags
@@ -26,6 +24,5 @@ module RPM
     typedef :pointer, :rpmCallbackData
 
     typedef :uint64, :rpm_loff_t
-
   end
 end

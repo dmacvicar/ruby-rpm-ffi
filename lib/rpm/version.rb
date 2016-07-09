@@ -1,9 +1,7 @@
 require 'rpm'
 
 module RPM
-
   class Version
-
     include Comparable
 
     # Parses a "epoch:version-release" string
@@ -14,15 +12,18 @@ module RPM
       epoch = nil
       release = nil
 
-      idx = version.rindex(?-)
-      version, release = version[0..idx-1], version[idx+1..-1] if idx
-      
-      idx = version.index(/\D/)
-      if (idx && version[idx] == ?:)
-        epoch = version[0..idx-1]
-        version = version[idx+1..-1]
+      idx = version.rindex('-')
+      if idx
+        release = version[idx + 1..-1]
+        version = version[0..idx - 1]
       end
-      return epoch ? epoch.to_i : nil, version, release
+
+      idx = version.index(/\D/)
+      if idx && version[idx] == ':'
+        epoch = version[0..idx - 1]
+        version = version[idx + 1..-1]
+      end
+      [epoch ? epoch.to_i : nil, version, release]
     end
 
     #
@@ -44,46 +45,39 @@ module RPM
     #   RPM:: Version.new "2.0.3", "5k"
     #
     def initialize(*argv)
-
       case argv.size
-        when 0
-          raise(ArgumentError "wrong number of arguments (0 for 1..3)")
-        when 1
-          RPM::Utils.check_type(argv[0], String)
-          @e, @v, @r = RPM::Version.parse_evr(argv[0])
-        when 2
-          # (vr, e)
-          RPM::Utils.check_type(argv[0], String)
-          @e, @v, @r = RPM::Version.parse_evr(argv[0])
-          raise(TypeError, "illegal argument value") if not e.nil?
-          @e = argv[1].to_i
-        when 3
-          RPM::Utils.check_type(argv[0], String)
-          RPM::Utils.check_type(argv[1], String)
-          @v = argv[0]
-          @r = argv[1]
-          @e = argv[2].to_i
-        else
-          raise(ArgumentError "too many arguments (#{args.size} for 1..3)")
+      when 0
+        raise(ArgumentError('wrong number of arguments (0 for 1..3)'))
+      when 1
+        RPM::Utils.check_type(argv[0], String)
+        @e, @v, @r = RPM::Version.parse_evr(argv[0])
+      when 2
+        # (vr, e)
+        RPM::Utils.check_type(argv[0], String)
+        @e, @v, @r = RPM::Version.parse_evr(argv[0])
+        raise(TypeError, 'illegal argument value') unless e.nil?
+        @e = argv[1].to_i
+      when 3
+        RPM::Utils.check_type(argv[0], String)
+        RPM::Utils.check_type(argv[1], String)
+        @v = argv[0]
+        @r = argv[1]
+        @e = argv[2].to_i
+      else
+        raise(ArgumentError("too many arguments (#{args.size} for 1..3)"))
       end
     end
 
     # @return [String] the version component
-    def v
-      @v
-    end
+    attr_reader :v
 
     # @return [String] the release component
     #   or +nil+
-    def r
-      @r
-    end
+    attr_reader :r
 
     # @return [String] the epoch component
     #   or +nil+
-    def e
-      @e
-    end
+    attr_reader :e
 
     # Comparison between versions
     # @param [Version] other
@@ -117,13 +111,13 @@ module RPM
     # @return [String]
     # @note The epoch is not included
     def to_vr
-      vr = @r.nil? ? "#{@v}" : "#{@v}-#{@r}"
+      vr = @r.nil? ? @v.to_s : "#{@v}-#{@r}"
     end
 
     # String representation in the form "e:v-r"
     # @return [String]
     # @note The epoch is included if present
-    def to_vre(opts={})
+    def to_vre(_opts = {})
       vr = to_vr
       vre = @e.nil? ? vr : "#{@e}:#{vr}"
     end
@@ -137,7 +131,7 @@ module RPM
     # Hash based on the version content
     # @return [String]
     def hash
-      h = @e.nil? ? 0 : @e;
+      h = @e.nil? ? 0 : @e
       h = (h << 1) ^ @r.hash
       h = (h << 1) ^ @v.hash
     end
@@ -149,7 +143,5 @@ module RPM
       vr = to_vr
       vre = @e.nil? ? "0:#{vr}" : "#{@e}:#{vr}"
     end
-
   end
-
 end

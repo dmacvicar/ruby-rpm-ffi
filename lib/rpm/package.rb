@@ -2,26 +2,24 @@ require 'rpm/c'
 require 'rpm/file'
 
 module RPM
-
   class ChangeLog
     attr_accessor :time, :name, :text
   end
 
   class Package
-
     # Create a new package object from data
     # @param [String] str Header data
     # @return [Package]
-    def load(data)
+    def load(_data)
       raise NotImplementedError
     end
 
     def self.create(name, version)
-      if not name.is_a?(String)
-        raise TypeError, "illegal argument type: name should be String"
+      unless name.is_a?(String)
+        raise TypeError, 'illegal argument type: name should be String'
       end
-      if not version.is_a?(RPM::Version)
-        raise TypeError, "illegal argument type: version should be RPM::Version"
+      unless version.is_a?(RPM::Version)
+        raise TypeError, 'illegal argument type: version should be RPM::Version'
       end
       hdr = RPM::C.headerNew
       if RPM::C.headerPutString(hdr, :name, name) != 1
@@ -42,7 +40,7 @@ module RPM
     # @param [Dependency] dep Dependency to add
     def add_dependency(dep)
       unless dep.is_a?(Dependency)
-        raise TypeError.new("illegal argument type: must be a Dependency")
+        raise TypeError, 'illegal argument type: must be a Dependency'
       end
 
       raise NotImplementedError
@@ -51,34 +49,34 @@ module RPM
     # Add a int32 value to the package header
     # @param [Number] tag Tag
     # @param [Number] val Value
-    def add_int32(tag, val)
+    def add_int32(_tag, _val)
       raise NotImplementedError
     end
 
     # Add a list of strings to the package header
     # @param [Number] tag Tag
     # @param [Array<String>] val Strings to add
-    def add_string_array(tag, val)
+    def add_string_array(_tag, _val)
       raise NotImplementedError
     end
 
     # Add a binary value to the package header
     # @param [Number] tag Tag
     # @param [String] val String to add
-    def add_string(tag, val)
+    def add_string(_tag, _val)
       raise NotImplementedError
     end
 
     # Add a binary value to the package header
     # @param [Number] tag Tag
     # @param [String] val Value
-    def add_binary(tag, val)
+    def add_binary(_tag, _val)
       raise NotImplementedError
     end
 
     # Deletes a tag of the package header
     # @param [Number] tag Tag
-    def delete_tag(tag)
+    def delete_tag(_tag)
       raise NotImplementedError
     end
 
@@ -118,20 +116,18 @@ module RPM
 
       ret = []
 
-      basenames.each_with_index do |basename, i|
-
+      basenames.each_with_index do |_basename, i|
         file = RPM::File.new("#{dirnames[diridxs[i]]}#{basenames[i]}",
-                md5list[i],
-                linklist[i],
-                sizelist[i],
-                mtimelist[i],
-                ownerlist[i],
-                grouplist[i],
-                rdevlist[i],
-                modelist[i],
-                flaglist.nil? ? RPM::C::FileAttrs[:none] : flaglist[i],
-                statelist.nil? ? RPM::C::FileState[:normal] : statelist[i]
-        )
+                             md5list[i],
+                             linklist[i],
+                             sizelist[i],
+                             mtimelist[i],
+                             ownerlist[i],
+                             grouplist[i],
+                             rdevlist[i],
+                             modelist[i],
+                             flaglist.nil? ? RPM::C::FileAttrs[:none] : flaglist[i],
+                             statelist.nil? ? RPM::C::FileState[:normal] : statelist[i])
         ret << file
       end
       ret
@@ -150,15 +146,15 @@ module RPM
       flagtd = ::FFI::AutoPointer.new(RPM::C.rpmtdNew, Package.method(:release_td))
 
       min = RPM::C::HEADERGET_MINMEM
-      return deps if (RPM::C.headerGet(@hdr, nametag, nametd, min) != 1)
-      return deps if (RPM::C.headerGet(@hdr, versiontag, versiontd, min) != 1)
-      return deps if (RPM::C.headerGet(@hdr, flagtag, flagtd, min) != 1)
+      return deps if RPM::C.headerGet(@hdr, nametag, nametd, min) != 1
+      return deps if RPM::C.headerGet(@hdr, versiontag, versiontd, min) != 1
+      return deps if RPM::C.headerGet(@hdr, flagtag, flagtd, min) != 1
 
       RPM::C.rpmtdInit(nametd)
       while RPM::C.rpmtdNext(nametd) != -1
         deps << klass.new(RPM::C.rpmtdGetString(nametd),
-                  RPM::Version.new(RPM::C.rpmtdNextString(versiontd)),
-                  RPM::C.rpmtdNextUint32(flagtd).read_uint, self)
+                          RPM::Version.new(RPM::C.rpmtdNextString(versiontd)),
+                          RPM::C.rpmtdNextUint32(flagtd).read_uint, self)
       end
       deps
     end
@@ -183,17 +179,17 @@ module RPM
       dependencies(RPM::Obsolete, :obsoletename, :obsoleteversion, :obsoleteflags)
     end
 
-    # @return [Array<RPM::Changelog>] changelog of the package as an array 
+    # @return [Array<RPM::Changelog>] changelog of the package as an array
     def changelog
       entries = []
       nametd = ::FFI::AutoPointer.new(RPM::C.rpmtdNew, Package.method(:release_td))
       timetd = ::FFI::AutoPointer.new(RPM::C.rpmtdNew, Package.method(:release_td))
       texttd = ::FFI::AutoPointer.new(RPM::C.rpmtdNew, Package.method(:release_td))
-    
+
       min = RPM::C::HEADERGET_MINMEM
-      return deps if (RPM::C.headerGet(@hdr, :changelogtime, timetd, min) != 1)
-      return deps if (RPM::C.headerGet(@hdr, :changelogname, nametd, min) != 1)
-      return deps if (RPM::C.headerGet(@hdr, :changelogtext, texttd, min) != 1)
+      return deps if RPM::C.headerGet(@hdr, :changelogtime, timetd, min) != 1
+      return deps if RPM::C.headerGet(@hdr, :changelogname, nametd, min) != 1
+      return deps if RPM::C.headerGet(@hdr, :changelogtext, texttd, min) != 1
 
       RPM::C.rpmtdInit(timetd)
       while RPM::C.rpmtdNext(timetd) != -1
@@ -218,42 +214,39 @@ module RPM
     #     require 'rpm/compat'
     #     pkg[RPM::TAG_NAME] => "xmlgraphics-fop"
     #
-    # @return [String, Fixnum, Array<String>, Array<Fixnum>, nil] 
+    # @return [String, Fixnum, Array<String>, Array<Fixnum>, nil]
     #   The value of the entry
     def [](tag)
       val = nil
       tagc = ::FFI::AutoPointer.new(RPM::C.rpmtdNew, Package.method(:release_td))
 
-      return nil if (RPM::C.headerGet(ptr, tag, tagc, 
-                      RPM::C::HEADERGET_MINMEM) == 0)
+      return nil if RPM::C.headerGet(ptr, tag, tagc,
+                                     RPM::C::HEADERGET_MINMEM) == 0
 
       type = RPM::C.rpmtdType(tagc)
       count = RPM::C.rpmtdCount(tagc)
       ret_type = RPM::C.rpmTagGetReturnType(tag)
 
       method_name = case type
-        when :int8_type, :char_type, :int16_type, :int32_type, :int64_type then :rpmtdGetNumber
-        when :string_type, :string_array_type, :bin_type then :rpmtdGetString
-        else raise NotImplementedError, "Don't know how to retrieve type '#{type}'"
+                    when :int8_type, :char_type, :int16_type, :int32_type, :int64_type then :rpmtdGetNumber
+                    when :string_type, :string_array_type, :bin_type then :rpmtdGetString
+                    else raise NotImplementedError, "Don't know how to retrieve type '#{type}'"
       end
 
-      is_array = case
-        when count > 1 then true
-        when ret_type == :array_return_type then true
-        when type == :string_array_type then true
-        else false
+      is_array = if count > 1 then true
+                 elsif ret_type == :array_return_type then true
+                 elsif type == :string_array_type then true
+                 else false
       end
 
       if is_array
         ret = []
         RPM::C.rpmtdInit(tagc)
-        while RPM::C.rpmtdNext(tagc) != -1
-          ret << RPM::C.send(method_name, tagc)
-        end
+        ret << RPM::C.send(method_name, tagc) while RPM::C.rpmtdNext(tagc) != -1
         return ret
       end
-      
-      return RPM::C.send(method_name, tagc)
+
+      RPM::C.send(method_name, tagc)
     end
 
     # @return [String] This package name
@@ -266,7 +259,7 @@ module RPM
       self[:arch]
     end
 
-    # TODO signature
+    # TODO: signature
 
     # @return [Version] Version for this package
     def version
@@ -284,10 +277,10 @@ module RPM
     # String representation of the package: "name-version-release-arch"
     # @return [String]
     def to_s
-      return "" if name.nil?
+      return '' if name.nil?
       return name if version.nil?
       return "#{name}-#{version}" if arch.nil?
-      return "#{name}-#{version}-#{arch}"
+      "#{name}-#{version}-#{arch}"
     end
 
     def self.open(filename)
@@ -307,13 +300,13 @@ module RPM
     # @visibility private
     def initialize(what)
       case what
-        when String then initialize_from_filename(what)
-        else initialize_from_header(what)
+      when String then initialize_from_filename(what)
+      else initialize_from_header(what)
       end
     end
 
     # @visibility private
-    def initialize_from_header(hdr=nil)
+    def initialize_from_header(hdr = nil)
       if hdr.nil?
         @hdr = ::FFI::AutoPointer.new(RPM::C.headerNew, Header.method(:release))
       elsif hdr.is_a?(::FFI::Pointer)
@@ -331,9 +324,7 @@ module RPM
       fd = nil
       begin
         fd = RPM::C.Fopen(filename, 'r')
-        if RPM::C.Ferror(fd) != 0
-          raise "#{filename} : #{RPM::C.Fstrerror(fd)}"
-        end
+        raise "#{filename} : #{RPM::C.Fstrerror(fd)}" if RPM::C.Ferror(fd) != 0
         RPM.transaction do |ts|
           rc = RPM::C.rpmReadPackageFile(ts.ptr, fd, filename, hdr)
         end
@@ -348,9 +339,5 @@ module RPM
     def ptr
       @hdr
     end
-
-
-
   end
-
 end
