@@ -294,7 +294,7 @@ module RPM
     begin
       attach_function 'rpmTagGetReturnType', [:rpmTagVal], :rpmTagReturnType
     rescue ::FFI::NotFoundError
-      attach_function 'rpmTagGetType', [:rpmTagVal], :rpmTagType
+      attach_function 'rpmTagGetType', [:rpmTagVal], TagType
 
       def self.rpmTagGetReturnType(tag)
         TagReturnType[rpmTagGetType(tag) & TagReturnType[:mask_return_type]]

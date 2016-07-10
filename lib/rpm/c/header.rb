@@ -15,7 +15,7 @@ module RPM
     HEADERGET_ARGV      = (1 << 4)
 
     # ..
-    attach_function 'headerGet', [:header, :rpmTagVal, :pointer, :uint32], :int
+    attach_function 'headerGet', [:header, Tag, :pointer, :uint32], :int
     attach_function 'headerPut', [:header, :pointer, :uint32], :int
     # ...
     attach_function 'headerFormat', [:header, :string, :pointer], :pointer

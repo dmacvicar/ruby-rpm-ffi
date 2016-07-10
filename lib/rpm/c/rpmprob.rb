@@ -33,10 +33,10 @@ module RPM
                          :obsoletes
                        ])
 
-    attach_function 'rpmProblemCreate', [:rpmProblemType, :string, :fnpyKey, :string, :string, :uint64], :rpmProblem
+    attach_function 'rpmProblemCreate', [ProblemType, :string, :fnpyKey, :string, :string, :uint64], :rpmProblem
     attach_function 'rpmProblemFree', [:rpmProblem],  :rpmProblem
     attach_function 'rpmProblemLink', [:rpmProblem],  :rpmProblem
-    attach_function 'rpmProblemGetType', [:rpmProblem], :rpmProblemType
+    attach_function 'rpmProblemGetType', [:rpmProblem], ProblemType
     attach_function 'rpmProblemGetKey', [:rpmProblem], :fnpyKey
     attach_function 'rpmProblemGetStr', [:rpmProblem], :string
     attach_function 'rpmProblemString', [:rpmProblem], :string
