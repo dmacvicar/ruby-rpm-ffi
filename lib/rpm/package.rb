@@ -221,7 +221,7 @@ module RPM
       tagc = ::FFI::AutoPointer.new(RPM::C.rpmtdNew, Package.method(:release_td))
 
       return nil if RPM::C.headerGet(ptr, tag, tagc,
-                                     RPM::C::HEADERGET_MINMEM) == 0
+                                     RPM::C::HEADERGET_MINMEM | RPM::C::HEADERGET_EXT) == 0
 
       type = RPM::C.rpmtdType(tagc)
       count = RPM::C.rpmtdCount(tagc)
