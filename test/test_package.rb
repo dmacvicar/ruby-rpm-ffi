@@ -7,7 +7,7 @@ class RPMHeaderTests < MiniTest::Unit::TestCase
     assert_equal '(none)', pkg.signature
   end
 
-  def test_open
+  def test_basic_tags
     pkg = RPM::Package.open(fixture('simple-1.0-0.i586.rpm'))
 
     req = RPM::Require.new('simple', RPM::Version.new('1.0', '0'), RPM::SENSE_GREATER | RPM::SENSE_EQUAL, nil)
@@ -22,6 +22,7 @@ class RPMHeaderTests < MiniTest::Unit::TestCase
     assert_equal 'i586', pkg[:arch]
     assert_kind_of RPM::Version, pkg.version
     assert_equal '1.0-0', pkg.version.to_s
+    assert_equal 'GPL', pkg[:license]
 
     backup_lang = ENV['LC_ALL']
 
@@ -54,6 +55,17 @@ class RPMHeaderTests < MiniTest::Unit::TestCase
     assert !file.symlink?
 
     assert_equal ['- Fix something', '- Fix something else'], pkg.changelog.map(&:text)
+  end
+
+  def test_numeric_tags
+    pkg = RPM::Package.open(fixture('simple-1.0-0.i586.rpm'))
+    # 1014 = license
+    assert_equal('GPL', pkg[1014])
+  end
+
+  def test_ext_tags
+    pkg = RPM::Package.open(fixture('simple-1.0-0.i586.rpm'))
+    assert_equal('simple-1.0-0.i586', pkg[:nevra])
   end
 
   def test_dependencies
