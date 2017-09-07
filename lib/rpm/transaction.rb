@@ -1,4 +1,3 @@
-require 'rpm'
 
 module RPM
   CallbackData = Struct.new(:type, :key, :package, :amount, :total) do

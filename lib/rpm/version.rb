@@ -1,4 +1,3 @@
-require 'rpm'
 
 module RPM
   class Version

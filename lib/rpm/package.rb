@@ -1,5 +1,3 @@
-require 'rpm/c'
-require 'rpm/file'
 
 module RPM
   class ChangeLog

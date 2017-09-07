@@ -1,6 +1,7 @@
 
 require 'rpm/c'
 require 'rpm/package'
+require 'rpm/file'
 require 'rpm/db'
 require 'rpm/problem'
 require 'rpm/transaction'
