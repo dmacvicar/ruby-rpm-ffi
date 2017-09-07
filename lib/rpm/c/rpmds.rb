@@ -36,8 +36,8 @@ module RPM
     typedef :rpmFlags, :rpmsenseFlags
 
     # ...
-    attach_function 'rpmdsSingle', [:rpmTagVal, :string, :string, :rpmsenseFlags], :rpmds
+    attach_function 'rpmdsSingle', %i[rpmTagVal string string rpmsenseFlags], :rpmds
     # ...
-    attach_function 'rpmdsCompare', [:rpmds, :rpmds], :int
+    attach_function 'rpmdsCompare', %i[rpmds rpmds], :int
   end
 end

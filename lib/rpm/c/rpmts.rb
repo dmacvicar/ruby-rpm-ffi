@@ -35,16 +35,16 @@ module RPM
 
     attach_function 'rpmtsCheck', [:rpmts], :int
     attach_function 'rpmtsOrder', [:rpmts], :int
-    attach_function 'rpmtsRun', [:rpmts, :rpmps, :int], :int
+    attach_function 'rpmtsRun', %i[rpmts rpmps int], :int
     attach_function 'rpmtsLink', [:rpmts], :rpmts
     attach_function 'rpmtsCloseDB', [:rpmts], :int
-    attach_function 'rpmtsOpenDB', [:rpmts, :int], :int
-    attach_function 'rpmtsInitDB', [:rpmts, :int], :int
+    attach_function 'rpmtsOpenDB', %i[rpmts int], :int
+    attach_function 'rpmtsInitDB', %i[rpmts int], :int
     attach_function 'rpmtsGetDBMode', [:rpmts], :int
-    attach_function 'rpmtsSetDBMode', [:rpmts, :int], :int
+    attach_function 'rpmtsSetDBMode', %i[rpmts int], :int
     attach_function 'rpmtsRebuildDB', [:rpmts], :int
     attach_function 'rpmtsVerifyDB', [:rpmts], :int
-    attach_function 'rpmtsInitIterator', [:rpmts, :rpmDbiTagVal, :pointer, :int], :rpmdbMatchIterator
+    attach_function 'rpmtsInitIterator', %i[rpmts rpmDbiTagVal pointer int], :rpmdbMatchIterator
     # ...
     attach_function 'rpmtsProblems', [:rpmts], :rpmps
     # ...
@@ -52,20 +52,20 @@ module RPM
     # more...
     attach_function 'rpmtsFree', [:rpmts], :pointer
     # ..
-    attach_function 'rpmtsSetNotifyCallback', [:rpmts, :rpmCallbackFunction, :rpmCallbackData], :int
+    attach_function 'rpmtsSetNotifyCallback', %i[rpmts rpmCallbackFunction rpmCallbackData], :int
     # ...
     attach_function 'rpmtsRootDir', [:rpmts], :string
-    attach_function 'rpmtsSetRootDir', [:rpmts, :string], :int
+    attach_function 'rpmtsSetRootDir', %i[rpmts string], :int
     # ...
     attach_function 'rpmtsGetRdb', [:rpmts], :rpmdb
     # ..
     attach_function 'rpmtsFlags', [:rpmts], :rpmtransFlags
-    attach_function 'rpmtsSetFlags', [:rpmts, :rpmtransFlags], :rpmtransFlags
+    attach_function 'rpmtsSetFlags', %i[rpmts rpmtransFlags], :rpmtransFlags
     # ...
-    attach_function 'rpmtsSetNotifyCallback', [:rpmts, :rpmCallbackFunction, :rpmCallbackData], :int
+    attach_function 'rpmtsSetNotifyCallback', %i[rpmts rpmCallbackFunction rpmCallbackData], :int
     # ...
     attach_function 'rpmtsCreate', [], :rpmts
-    attach_function 'rpmtsAddInstallElement', [:rpmts, :header, :fnpyKey, :int, :rpmRelocation], :int
-    attach_function 'rpmtsAddEraseElement', [:rpmts, :header, :int], :int
+    attach_function 'rpmtsAddInstallElement', %i[rpmts header fnpyKey int rpmRelocation], :int
+    attach_function 'rpmtsAddEraseElement', %i[rpmts header int], :int
   end
 end

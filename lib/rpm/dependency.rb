@@ -31,7 +31,7 @@ module RPM
         other.provides.each do |prov|
           return true if satisfy?(prov)
         end
-        return false
+        false
       when RPM::Dependency then
         RPM::C.rpmdsCompare(
           RPM::C.rpmdsSingle(:providename, other.name,

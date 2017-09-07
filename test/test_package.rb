@@ -36,7 +36,7 @@ class RPMHeaderTests < MiniTest::Unit::TestCase
     ENV['LC_ALL'] = backup_lang
 
     # Arrays
-    assert_equal %w(root root), pkg[:fileusername]
+    assert_equal %w[root root], pkg[:fileusername]
     assert_equal [6, 5], pkg[:filesizes]
 
     assert pkg.provides.map(&:name).include?('simple(x86-32)')

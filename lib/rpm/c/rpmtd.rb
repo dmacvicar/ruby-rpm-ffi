@@ -23,12 +23,12 @@ module RPM
     attach_function 'rpmtdGetString', [:rpmtd], :string
     attach_function 'rpmtdGetNumber', [:rpmtd], :uint64
     # ...
-    attach_function 'rpmtdFromUint8', [:rpmtd, :rpmTagVal, :pointer, :rpm_count_t], :int
-    attach_function 'rpmtdFromUint16', [:rpmtd, :rpmTagVal, :pointer, :rpm_count_t], :int
-    attach_function 'rpmtdFromUint32', [:rpmtd, :rpmTagVal, :pointer, :rpm_count_t], :int
-    attach_function 'rpmtdFromUint64', [:rpmtd, :rpmTagVal, :pointer, :rpm_count_t], :int
-    attach_function 'rpmtdFromString', [:rpmtd, :rpmTagVal, :string], :int
-    attach_function 'rpmtdFromStringArray', [:rpmtd, :rpmTagVal, :pointer, :rpm_count_t], :int
+    attach_function 'rpmtdFromUint8', %i[rpmtd rpmTagVal pointer rpm_count_t], :int
+    attach_function 'rpmtdFromUint16', %i[rpmtd rpmTagVal pointer rpm_count_t], :int
+    attach_function 'rpmtdFromUint32', %i[rpmtd rpmTagVal pointer rpm_count_t], :int
+    attach_function 'rpmtdFromUint64', %i[rpmtd rpmTagVal pointer rpm_count_t], :int
+    attach_function 'rpmtdFromString', %i[rpmtd rpmTagVal string], :int
+    attach_function 'rpmtdFromStringArray', %i[rpmtd rpmTagVal pointer rpm_count_t], :int
     # ...
   end
 end

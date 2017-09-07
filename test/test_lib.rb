@@ -5,7 +5,7 @@ class RPMLibTests < MiniTest::Unit::TestCase
     assert_kind_of String, RPM::C.RPMVERSION
     # "x.y.z"
     assert(RPM::C.RPMVERSION.size >= 5)
-    assert_kind_of Fixnum, RPM::C.rpm_version_code
+    assert_kind_of Integer, RPM::C.rpm_version_code
     # >= 4.0.0
     assert(RPM::C.rpm_version_code >= ((4 << 16) + (0 << 8) + (0 << 0)))
   end

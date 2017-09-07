@@ -120,7 +120,7 @@ module RPM
       @path = path
       @md5sum = md5sum
       # If link_to is "" save it as nil
-      @link_to = ((link_to && link_to.empty?) ? nil : link_to)
+      @link_to = (link_to && link_to.empty? ? nil : link_to)
       @size = size
       @mtime = mtime
       @owner = owner

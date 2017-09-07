@@ -22,6 +22,6 @@ module RPM
                         ])
 
     typedef :pointer, :rpmCallbackData
-    callback :rpmCallbackFunction, [:pointer, :rpmCallbackType, :rpm_loff_t, :rpm_loff_t, :fnpyKey, :rpmCallbackData], :pointer
+    callback :rpmCallbackFunction, %i[pointer rpmCallbackType rpm_loff_t rpm_loff_t fnpyKey rpmCallbackData], :pointer
   end
 end

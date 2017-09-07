@@ -112,7 +112,6 @@ module RPM
 
     # @return number of instances of +name+ in the
     # database
-    def count_packages(name)
-    end
+    def count_packages(name); end
   end
 end

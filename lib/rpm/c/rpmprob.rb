@@ -18,22 +18,22 @@ module RPM
 
     typedef :rpmFlags, :rpmprobFilterFlags
 
-    ProblemType = enum(:rpmProblemType, [
-                         :badarch,
-                         :bados,
-                         :pkg_installed,
-                         :badrelocate,
-                         :requires,
-                         :conflict,
-                         :new_file_conflict,
-                         :file_conflict,
-                         :oldpackage,
-                         :diskspace,
-                         :disknodes,
-                         :obsoletes
+    ProblemType = enum(:rpmProblemType, %i[
+                         badarch
+                         bados
+                         pkg_installed
+                         badrelocate
+                         requires
+                         conflict
+                         new_file_conflict
+                         file_conflict
+                         oldpackage
+                         diskspace
+                         disknodes
+                         obsoletes
                        ])
 
-    attach_function 'rpmProblemCreate', [:rpmProblemType, :string, :fnpyKey, :string, :string, :uint64], :rpmProblem
+    attach_function 'rpmProblemCreate', %i[rpmProblemType string fnpyKey string string uint64], :rpmProblem
     attach_function 'rpmProblemFree', [:rpmProblem],  :rpmProblem
     attach_function 'rpmProblemLink', [:rpmProblem],  :rpmProblem
     attach_function 'rpmProblemGetType', [:rpmProblem], :rpmProblemType
@@ -42,7 +42,7 @@ module RPM
     attach_function 'rpmProblemString', [:rpmProblem], :string
 
     begin
-      attach_function 'rpmProblemCompare', [:rpmProblem, :rpmProblem], :int
+      attach_function 'rpmProblemCompare', %i[rpmProblem rpmProblem], :int
     rescue ::FFI::NotFoundError
       # TODO: Implement this for librpm 4.8.
       def self.rpmProblemCompare(_a, _b)

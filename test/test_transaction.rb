@@ -98,7 +98,6 @@ class RPMTransactionTests < MiniTest::Unit::TestCase
 
       RPM.transaction(dir) do |t|
         begin
-
           assert_raises TypeError do
             t.delete(Object.new)
           end
@@ -112,7 +111,6 @@ class RPMTransactionTests < MiniTest::Unit::TestCase
 
           assert !File.exist?(File.join(dir, '/usr/share/simple/README')),
                  "package #{pkg} should not be installed"
-
         ensure
           # Force close so that RPM does not try to do it
           # when the tmpdir is deleted

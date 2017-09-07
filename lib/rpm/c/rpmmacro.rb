@@ -15,12 +15,12 @@ module RPM
     RMIL_GLOBAL = 0
 
     # ...
-    attach_function 'addMacro', [:pointer, :string, :string, :string, :int], :void
-    attach_function 'delMacro', [:pointer, :string], :void
+    attach_function 'addMacro', %i[pointer string string string int], :void
+    attach_function 'delMacro', %i[pointer string], :void
     # ...
-    attach_function 'expandMacros', [:pointer, :pointer, :pointer, :size_t], :int
+    attach_function 'expandMacros', %i[pointer pointer pointer size_t], :int
     # ...
-    attach_function 'rpmInitMacros', [:pointer, :string], :void
+    attach_function 'rpmInitMacros', %i[pointer string], :void
     # ...
   end
 end
