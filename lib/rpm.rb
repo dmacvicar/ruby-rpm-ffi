@@ -53,9 +53,17 @@ module RPM
   # @param [String] value Value of the macro or +nil+ to delete it
   def self.[]=(name, value)
     if value.nil?
-      RPM::C.delMacro(nil, name.to_s)
+      if C::rpm_version_code >= ((4 << 16) + (14 << 8) + (0 << 0))
+        RPM::C.rpmPopMacro(nil, name.to_s)
+      else
+        RPM::C.delMacro(nil, name.to_s)
+      end
     else
-      RPM::C.addMacro(nil, name.to_s, '', value.to_s, RPM::C::RMIL_DEFAULT)
+      if C::rpm_version_code >= ((4 << 16) + (14 << 8) + (0 << 0))
+        RPM::C.rpmPushMacro(nil, name.to_s, '', value.to_s, RPM::C::RMIL_DEFAULT)
+      else
+        RPM::C.addMacro(nil, name.to_s, '', value.to_s, RPM::C::RMIL_DEFAULT)
+      end
     end
   end
 end
