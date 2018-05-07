@@ -15,10 +15,16 @@ module RPM
     RMIL_GLOBAL = 0
 
     # ...
-    attach_function 'addMacro', %i[pointer string string string int], :void
-    attach_function 'delMacro', %i[pointer string], :void
+    # http://rpm.org/wiki/Releases/4.14.0 deprecated addMacro/delMacro
+    if rpm_version_code >= ((4 << 16) + (14 << 8) + (0 << 0))
+      attach_function 'rpmPushMacro', [:pointer, :string, :string, :string, :int], :void
+      attach_function 'rpmPopMacro', [:pointer, :string], :void
+    else
+      attach_function 'addMacro', [:pointer, :string, :string, :string, :int], :void
+      attach_function 'delMacro', [:pointer, :string], :void
+      attach_function 'expandMacros', [:pointer, :pointer, :pointer, :size_t], :int
+    end
     # ...
-    attach_function 'expandMacros', %i[pointer pointer pointer size_t], :int
     # ...
     attach_function 'rpmInitMacros', %i[pointer string], :void
     # ...
