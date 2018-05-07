@@ -90,7 +90,7 @@ The gem is divided in two modules:
 
 # Status, Compatibility and Differences with ruby-rpm
 
-* Tested rpm 4.9 only
+* Only rpm 4.11.x or later will be supported
 * You can use symbols: instead of RPM::TAG_DESCRIPTION you
   can use just :description. 'rpm/compat' is by default loaded
   and provides compatibility with the RPM::TAG_* style constants
@@ -128,6 +128,40 @@ rake docker_test
   newer rpms.
 
 ## API Checklist and TODO
+
+### Low level 1:1 RPM::C API
+
+* http://rpm.org/wiki/Releases/4.14.0
+  - [ ] Add rpmfiVerify() and rpmfilesVerify()
+  - [ ] Add pmsqPoll(), rpmsqActivate(), rpmsqSetAction(), rpmsqBlock()
+  - [ ] Add rpmDigestBundleAddID()
+  - [ ] Add RPMTRANS_FLAG_NOCAPS flag to disable file capabilities
+  - [ ] Add RPMVSF_NOPAYLOAD flag to disable payload digest verification
+  - [ ] Add pgpPubkeyKeyID()
+  - [X] Add rpmPushMacro() and rpmPopMacro() (to replace addMacro() and delMacro())
+  - [ ] Remove headerNVR(), headerNEVRA(), headerGetNEVR(), headerGetNEVRA(), headerGetEVR(), headerGetColor(), rpmfiMD5(), expandMacros(), addMacro(), delMacro()
+
+* http://rpm.org/wiki/Releases/4.13.0
+  - [ ] Add rpmsqSetInterruptSafety()
+  - [ ] Add/Change rpmPkgSign()
+  - [ ] Add RPMCALLBACK_ELEM_PROGRESS callback type
+  - [ ] Add rpmExpandMacros()
+
+* http://rpm.org/wiki/Releases/4.12.0
+  - [ ] Add rpmtxnBegin() and rpmtxnEnd()
+  - [ ] Add rpmtsImportHeader()
+  - [ ] Add rpmtsAddReinstallElement()
+  - [ ] Add rpmdbIndexIteratorNextTd()
+  - [ ] Add file info set iterator functions: rpmfiFLinks(), rpmfiFindFN(), rpmfiStat()
+  - [ ] Add rpmfiOFN(), rpmfiOBN(), rpmfiODN(), rpmfiFindOFN()
+  - [ ] Add rpmteFiles()
+  - [ ] Add rpmdsTagF(), rpmdsTagEVR(), rpmdsD(), rpmdsPutToHeader(), rpmdsTi(), rpmdsTagTi() and rpmdsSinglePoolTix()
+
+* http://rpm.org/wiki/Releases/4.11.0
+  - [ ] Add rpmstrPool object + associated functions
+  - [ ] Add rpmIsGlob()
+  - [ ] Add rpmtdToPool()
+  - [ ] Add rpmGetArchColor()
 
 ### RPM
 
