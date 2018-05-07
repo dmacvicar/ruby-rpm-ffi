@@ -2,7 +2,7 @@ require_relative('helper')
 require 'tmpdir'
 require 'pathname'
 
-class RPMTransactionTests < MiniTest::Unit::TestCase
+class RPMTransactionTests < Minitest::Test
   PACKAGE_FILENAME = 'simple-1.0-0.i586.rpm'.freeze
 
   def test_flags

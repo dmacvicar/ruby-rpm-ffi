@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'helper')
 
-class RPMHeaderTests < MiniTest::Unit::TestCase
+class RPMHeaderTests < Minitest::Test
   def test_create
     pkg = RPM::Package.create('foo', RPM::Version.new('1.0'))
     assert_equal 'foo', pkg.name

@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'helper')
 
-class RPMFileTests < MiniTest::Unit::TestCase
+class RPMFileTests < Minitest::Test
   def test_link_to
     f = RPM::File.new('path', 'md5sum', nil, 42, 1,
                       'owner', 'group', 43, 0o777, 44, 45)

@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'helper')
 
-class RPMHeaderTests < MiniTest::Unit::TestCase
+class RPMHeaderTests < Minitest::Test
   def test_create
     problem = RPM::Problem.create(:requires, 'foo-1.0-0', 'foo.rpm', 'bar-1.0-0', 'Hello', 1)
     assert_equal 'foo.rpm', problem.key
