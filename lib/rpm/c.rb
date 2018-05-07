@@ -21,6 +21,18 @@ require 'rpm/c/rpmtypes'
 require 'rpm/c/rpmcallback'
 require 'rpm/c/rpmtag'
 require 'rpm/c/rpmlib'
+
+module RPM
+  module C
+
+    def self.rpm_version_code
+      ver = ::RPM::C.RPMVERSION.split('.', 3)
+      return (ver[0].to_i<<16) + (ver[1].to_i<<8) + (ver[2].to_i<<0)
+    end
+
+  end
+end
+
 require 'rpm/c/rpmlog'
 require 'rpm/c/rpmmacro'
 require 'rpm/c/rpmio'
@@ -34,12 +46,3 @@ require 'rpm/c/rpmcli'
 require 'rpm/c/rpmts'
 require 'rpm/c/rpmds'
 require 'rpm/c/rpmtd'
-
-module RPM
-  module C
-    def self.rpm_version_code
-      ver = ::RPM::C.RPMVERSION.split('.', 3)
-      (ver[0].to_i << 16) + (ver[1].to_i << 8) + (ver[2].to_i << 0)
-    end
-  end
-end
