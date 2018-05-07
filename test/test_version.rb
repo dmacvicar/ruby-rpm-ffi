@@ -56,7 +56,7 @@ class RPMVersionTests < Minitest::Test
   def test_epoch_none_zero
     v1 = RPM::Version.new('1-2')
     v2 = RPM::Version.new('0:1-2')
-    assert_equal(nil, v1.e)
+    assert_nil v1.e
     assert_equal(0, v2.e)
     assert(v1 == v2)
     assert_equal(v1.hash, v2.hash)
