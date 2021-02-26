@@ -26,6 +26,7 @@ jobs:
     - name: Intall utilities
       run: | 
         zypper update
+        zypper install -y --no-recommends openssh
         zypper install -y --no-recommends shadow insserv-compat busybox
         env
         zypper install -y --no-recommends tar gzip git-core
