@@ -17,24 +17,19 @@ jobs:
   test:
 
     runs-on: ubuntu-latest
-    container:
-      image: registry.opensuse.org/opensuse/tumbleweed
     strategy:
       matrix:
         ruby-version: ['2.7', '3.0']
     steps:
     - name: Intall utilities
-      run: | 
-        zypper update
-        # see https://forums.opensuse.org/showthread.php/550195-Install-git-in-docker
-        set +e
-        zypper install -y --no-recommends openssh-server
-        set -e
-        zypper install -y --no-recommends tar gzip git-core
+      run: |
+        apt-get update
+        apt-get install -y rpm
     - uses: actions/checkout@v2
     - name: Set up Ruby
-      run: |
-        zypper install -y --no-recommends ruby${{ matrix.ruby-version }} ruby${{ matrix.ruby-version }}-rubygem-bundler
-        bundler install
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true # runs 'bundle install' an
     - name: Run tests
       run: bundle exec rake
