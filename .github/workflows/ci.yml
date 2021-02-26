@@ -27,7 +27,7 @@ jobs:
       run: | 
         zypper update
         zypper install -y shadow
-        zypper install -y tar gzip git
+        zypper install -y tar gzip git-core
     - uses: actions/checkout@v2
     - name: Set up Ruby
       run: |
