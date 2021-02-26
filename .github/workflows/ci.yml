@@ -26,9 +26,8 @@ jobs:
     - name: Intall utilities
       run: | 
         zypper update
-        zypper install -y --no-recommends shadow insserv-compat busybox
-        env
-        whoami
+        # see https://forums.opensuse.org/showthread.php/550195-Install-git-in-docker
+        zypper install -y --no-recommends openssh-server || true
         zypper install -y --no-recommends tar gzip git-core
     - uses: actions/checkout@v2
     - name: Set up Ruby
