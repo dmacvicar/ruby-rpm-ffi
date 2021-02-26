@@ -28,7 +28,7 @@ jobs:
         zypper update
         zypper install -y --no-recommends shadow insserv-compat busybox
         env
-        zypper install -y --no-recommends tar gzip git.core
+        zypper install -y --no-recommends tar gzip git-core
     - uses: actions/checkout@v2
     - name: Set up Ruby
       run: |
