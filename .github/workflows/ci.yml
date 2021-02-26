@@ -26,6 +26,7 @@ jobs:
     - name: Intall utilities
       run: | 
         zypper update
+        zypper install -y shadow
         zypper install -y tar gzip git
     - uses: actions/checkout@v2
     - name: Set up Ruby
