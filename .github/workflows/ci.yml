@@ -32,4 +32,4 @@ jobs:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true # runs 'bundle install' an
     - name: Run tests
-      run: sudo bundle exec rake
+      run: bundle exec sudo rake
