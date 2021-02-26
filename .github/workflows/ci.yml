@@ -27,7 +27,9 @@ jobs:
       run: | 
         zypper update
         # see https://forums.opensuse.org/showthread.php/550195-Install-git-in-docker
-        zypper install -y --no-recommends openssh-server || true
+        set +e
+        zypper install -y --no-recommends openssh-server
+        set -e
         zypper install -y --no-recommends tar gzip git-core
     - uses: actions/checkout@v2
     - name: Set up Ruby
