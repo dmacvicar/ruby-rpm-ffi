@@ -26,9 +26,9 @@ jobs:
     - name: Intall utilities
       run: | 
         zypper update
-        zypper install -y --no-recommends openssh
         zypper install -y --no-recommends shadow insserv-compat busybox
         env
+        whoami
         zypper install -y --no-recommends tar gzip git-core
     - uses: actions/checkout@v2
     - name: Set up Ruby
