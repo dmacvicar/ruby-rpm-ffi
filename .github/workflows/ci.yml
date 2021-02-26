@@ -23,10 +23,10 @@ jobs:
       matrix:
         ruby-version: ['2.6', '2.7', '3.0']
     steps:
-    - name: Intall tar
+    - name: Intall tar and gzip
       run: | 
         zypper update
-        zypper install -y tar
+        zypper install -y tar gzip
     - uses: actions/checkout@v2
     - name: Set up Ruby
     # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
