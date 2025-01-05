@@ -261,15 +261,7 @@ module RPM
 
     # @return [Version] Version for this package
     def version
-      v_ptr = ::FFI::MemoryPointer.new(:pointer, 1)
-      r_ptr = ::FFI::MemoryPointer.new(:pointer, 1)
-
-      RPM::C.headerNVR(ptr, nil, v_ptr, r_ptr)
-      v = v_ptr.read_pointer.read_string
-      r = r_ptr.read_pointer.read_string
-      v_ptr.free
-      r_ptr.free
-      Version.new(v, r, self[:epoch])
+      Version.new(self[:version], self[:release], self[:epoch])
     end
 
     # String representation of the package: "name-version-release-arch"
