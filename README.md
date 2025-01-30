@@ -1,6 +1,7 @@
 
 # RPM bindings for ruby
 
+[![CI](https://github.com/ManageIQ/ruby-rpm-ffi2/actions/workflows/ci.yaml/badge.svg)](https://github.com/ManageIQ/ruby-rpm-ffi2/actions/workflows/ci.yaml)
 
 # WARNING
 
