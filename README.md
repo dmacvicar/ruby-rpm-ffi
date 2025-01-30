@@ -1,9 +1,6 @@
 
 # RPM bindings for ruby
 
-![maintained](https://img.shields.io/maintenance/yes/2016.svg) [![Build Status](https://travis-ci.org/dmacvicar/ruby-rpm-ffi.svg?branch=master)](https://travis-ci.org/dmacvicar/ruby-rpm-ffi)
-
-* http://github.com/dmacvicar/ruby-rpm-ffi
 
 # WARNING
 
@@ -70,7 +67,7 @@ This gem:
 
 * Is pure ruby
 * Is documented
-* Has as a goal to support only the latest rpm version plus the ones in 
+* Has as a goal to support only the latest rpm version plus the ones in
   use some releases back in popular rpm based distros
 * Uses FFI, so it should work with other interpreters
   (Because https://github.com/rubinius/rubinius/issues/682 it currently does
@@ -373,4 +370,3 @@ rake docker_test
   Copyright © 2002 Kenta Murata. Relicensed with his permission.
 
 Licensed under the MIT license. See MIT-LICENSE for details.
-
