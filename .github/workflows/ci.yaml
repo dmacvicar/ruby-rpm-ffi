@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
     steps:
     - uses: actions/checkout@v4
+    - name: Build docker images
+      run: rake docker_images
     - name: Run tests
-      run: |
-        rake docker_images
-        rake docker_test
+      run: rake docker_test
