@@ -1,4 +1,4 @@
-FROM docker.io/redhat/ubi8:latest
+FROM registry.access.redhat.com/ubi8/ubi
 RUN dnf module -y enable ruby:3.1
 RUN dnf install -y ruby git
 RUN gem install bundler
