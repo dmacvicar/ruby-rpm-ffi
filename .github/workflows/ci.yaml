@@ -13,9 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      matrix:
+        platform:
+        - ubi8
+        - ubi9
     steps:
     - uses: actions/checkout@v4
-    - name: Build docker images
-      run: rake docker_images
+    - name: Build docker image
+      run: rake docker_images[${{ matrix.platform }}]
     - name: Run tests
-      run: rake docker_test
+      run: rake docker_test[${{ matrix.platform }}]
