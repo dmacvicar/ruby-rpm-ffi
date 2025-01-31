@@ -57,7 +57,7 @@ class RPMTransactionTests < Minitest::Test
   end
 
   def test_test_flag_install
-    skip("NoMethodError: undefined method `expandMacros' for RPM::C:Module")
+    skip("hanging")
 
     filename = 'simple-1.0-0.i586.rpm'
     pkg = RPM::Package.open(fixture(filename))
@@ -80,7 +80,7 @@ class RPMTransactionTests < Minitest::Test
   def test_install_and_remove
     pkg = RPM::Package.open(fixture(PACKAGE_FILENAME))
 
-    skip("NoMethodError: undefined method `expandMacros' for RPM::C:Module")
+    skip("hanging")
 
     Dir.mktmpdir do |dir|
       RPM.transaction(dir) do |t|
