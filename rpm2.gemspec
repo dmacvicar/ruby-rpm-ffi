@@ -5,7 +5,7 @@ require_relative 'lib/rpm/gem_version'
 Gem::Specification.new do |s|
   s.name        = 'rpm2'
   s.version     = RPM::GEM_VERSION
-  s.authors     = ['Duncan Mac-Vicar P.', 'ManageIQ Developers']
+  s.authors     = ['Duncan Mac-Vicar P.', 'ManageIQ Authors']
   s.email       = ['dmacvicar@suse.de']
   s.homepage    = 'https://github.com/ManageIQ/ruby-rpm-ffi2'
   s.licenses    = ['MIT']
