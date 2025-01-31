@@ -125,7 +125,6 @@ class RPMTransactionTests < Minitest::Test
   end
 
   def test_install_with_custom_callback
-    skip("NoMethodError: undefined method `headerNVR' for RPM::C:Module")
     pkg = RPM::Package.open(fixture(PACKAGE_FILENAME))
 
     Dir.mktmpdir do |dir|
