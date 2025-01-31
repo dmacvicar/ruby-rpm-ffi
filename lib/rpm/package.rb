@@ -215,7 +215,6 @@ module RPM
     # @return [String, Fixnum, Array<String>, Array<Fixnum>, nil]
     #   The value of the entry
     def [](tag)
-      val = nil
       tagc = ::FFI::AutoPointer.new(RPM::C.rpmtdNew, Package.method(:release_td))
 
       return nil if RPM::C.headerGet(ptr, tag, tagc,
@@ -316,7 +315,7 @@ module RPM
         fd = RPM::C.Fopen(filename, 'r')
         raise "#{filename} : #{RPM::C.Fstrerror(fd)}" if RPM::C.Ferror(fd) != 0
         RPM.transaction do |ts|
-          rc = RPM::C.rpmReadPackageFile(ts.ptr, fd, filename, hdr)
+          RPM::C.rpmReadPackageFile(ts.ptr, fd, filename, hdr)
         end
       ensure
         RPM::C.Fclose(fd) unless fd.nil?

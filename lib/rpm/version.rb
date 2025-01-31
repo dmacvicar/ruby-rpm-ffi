@@ -91,7 +91,7 @@ module RPM
     #
     def <=>(other)
       RPM::Utils.check_type(other, RPM::Version)
-      ret = RPM::C.rpmvercmp(to_vre_epoch_zero, other.to_vre_epoch_zero)
+      RPM::C.rpmvercmp(to_vre_epoch_zero, other.to_vre_epoch_zero)
     end
 
     # @param [Version] other Version to compare against
@@ -110,7 +110,7 @@ module RPM
     # @return [String]
     # @note The epoch is not included
     def to_vr
-      vr = @r.nil? ? @v.to_s : "#{@v}-#{@r}"
+      @r.nil? ? @v.to_s : "#{@v}-#{@r}"
     end
 
     # String representation in the form "e:v-r"
@@ -118,7 +118,7 @@ module RPM
     # @note The epoch is included if present
     def to_vre(_opts = {})
       vr = to_vr
-      vre = @e.nil? ? vr : "#{@e}:#{vr}"
+      @e.nil? ? vr : "#{@e}:#{vr}"
     end
 
     # Alias for +to_vr+
@@ -140,7 +140,7 @@ module RPM
     # @note The epoch is included always. As 0 if not present
     def to_vre_epoch_zero
       vr = to_vr
-      vre = @e.nil? ? "0:#{vr}" : "#{@e}:#{vr}"
+      @e.nil? ? "0:#{vr}" : "#{@e}:#{vr}"
     end
   end
 end
