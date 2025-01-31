@@ -364,6 +364,7 @@ rake docker_test
 
 # LICENSE
 
+* Copyright © 2025 ManageIQ Authors
 * Copyright © 2011 Duncan Mac-Vicar Prett <dmacvicar@suse.de>
 * Copyright © 2011 SUSE Linux Products GmbH
 
