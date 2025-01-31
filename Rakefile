@@ -53,6 +53,6 @@ end
 desc "Run the tests from within the docker images"
 task :docker_test, [:platform] do |_t, args|
   each_dockerfile(args[:platform]) do |dockerfile, tag|
-    sh "podman run -ti -v #{Dir.pwd}:/src #{tag} rake test"
+    sh "podman run --rm -ti -v #{Dir.pwd}:/src #{tag} rake test"
   end
 end
