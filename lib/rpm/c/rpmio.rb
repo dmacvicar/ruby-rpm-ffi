@@ -12,8 +12,6 @@ module RPM
 
     attach_function 'fdDup', [:int], :FD_t
 
-    attach_function 'Fstrerror', [:FD_t], :string
-
     attach_function 'fdLink', [:pointer], :FD_t
   end
 end

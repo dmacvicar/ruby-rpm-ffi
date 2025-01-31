@@ -62,8 +62,6 @@ module RPM
     attach_function 'rpmtsFlags', [:rpmts], :rpmtransFlags
     attach_function 'rpmtsSetFlags', %i[rpmts rpmtransFlags], :rpmtransFlags
     # ...
-    attach_function 'rpmtsSetNotifyCallback', %i[rpmts rpmCallbackFunction rpmCallbackData], :int
-    # ...
     attach_function 'rpmtsCreate', [], :rpmts
     attach_function 'rpmtsAddInstallElement', %i[rpmts header fnpyKey int rpmRelocation], :int
     attach_function 'rpmtsAddEraseElement', %i[rpmts header int], :int

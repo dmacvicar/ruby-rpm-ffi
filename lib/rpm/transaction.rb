@@ -164,8 +164,6 @@ module RPM
     # end
     # @yield [CallbackData] sig Transaction progress
     def commit
-      flags = RPM::C::TransFlags[:none]
-
       callback = proc do |hdr, type, amount, total, key_ptr, data_ignored|
         key_id = key_ptr.address
         key = @keys.include?(key_id) ? @keys[key_id] : nil
