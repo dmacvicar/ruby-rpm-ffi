@@ -6,6 +6,7 @@ module RPM
 
     begin
       ffi_lib ['rpm',
+               'librpm.so.9',
                'librpm.so.8', # Tumbleweed
                'librpm.so.7', # fedora 23
                'librpm.so.3', 'librpm.so.2', 'librpm.so.1']
