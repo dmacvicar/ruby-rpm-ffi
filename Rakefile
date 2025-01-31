@@ -35,18 +35,24 @@ rescue LoadError
   end
 end
 
+def each_dockerfile(platform)
+  platform ||= "*"
+  Dir.glob("_docker/Dockerfile.#{platform}").each do |dockerfile|
+    tag = "ruby-rpm-ffi:#{File.extname(dockerfile).delete('.')}"
+    yield dockerfile, tag
+  end
+end
+
 desc "Build the docker images for test"
-task :docker_images do
-  Dir.glob('_docker/Dockerfile.*').each do |dockerfile|
-    tag = 'ruby-rpm-ffi:' + File.extname(dockerfile).delete('.')
-    sh %(podman build -f #{dockerfile} -t #{tag} .)
+task :docker_images, [:platform] do |_t, args|
+  each_dockerfile(args[:platform]) do |dockerfile, tag|
+    sh "podman build -f #{dockerfile} -t #{tag} ."
   end
 end
 
 desc "Run the tests from within the docker images"
-task :docker_test do
-  Dir.glob('_docker/Dockerfile.*').each do |dockerfile|
-    tag = 'ruby-rpm-ffi:' + File.extname(dockerfile).delete('.')
-    sh %(podman run -ti -v #{Dir.pwd}:/src #{tag} rake test)
+task :docker_test, [:platform] do |_t, args|
+  each_dockerfile(args[:platform]) do |dockerfile, tag|
+    sh "podman run -ti -v #{Dir.pwd}:/src #{tag} rake test"
   end
 end
