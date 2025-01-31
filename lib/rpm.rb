@@ -45,7 +45,7 @@ module RPM
       obuf = ::FFI::MemoryPointer.new(:pointer)
       sbuf = FFI::MemoryPointer.from_string("%{#{name}}")
       ret = RPM::C.rpmExpandMacros(nil, sbuf, obuf, 0)
-      return if ret < 0
+      raise if ret < 0
 
       val = obuf.get_pointer(0)
       val.read_string
@@ -53,7 +53,7 @@ module RPM
       buffer = ::FFI::MemoryPointer.new(:pointer, 1024)
       buffer.write_string("%{#{name}}")
       ret = RPM::C.expandMacros(nil, nil, buffer, 1024)
-      return if ret < 0
+      raise if ret < 0
 
       buffer.read_string
     end
