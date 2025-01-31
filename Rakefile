@@ -38,7 +38,7 @@ end
 def each_dockerfile(platform)
   platform ||= "*"
   Dir.glob("_docker/Dockerfile.#{platform}").each do |dockerfile|
-    tag = "ruby-rpm-ffi:#{File.extname(dockerfile).delete('.')}"
+    tag = "localhost/ruby-rpm-ffi:#{File.extname(dockerfile).delete('.')}"
     yield dockerfile, tag
   end
 end
