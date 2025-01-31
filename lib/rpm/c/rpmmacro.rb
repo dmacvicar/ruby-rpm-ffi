@@ -19,6 +19,7 @@ module RPM
     if rpm_version_code >= ((4 << 16) + (14 << 8) + (0 << 0))
       attach_function 'rpmPushMacro', [:pointer, :string, :string, :string, :int], :void
       attach_function 'rpmPopMacro', [:pointer, :string], :void
+      attach_function 'rpmExpandMacros', [:pointer, :pointer, :pointer, :int], :int
     else
       attach_function 'addMacro', [:pointer, :string, :string, :string, :int], :void
       attach_function 'delMacro', [:pointer, :string], :void
