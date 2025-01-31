@@ -46,13 +46,13 @@ end
 desc "Build the docker images for test"
 task :docker_images, [:platform] do |_t, args|
   each_dockerfile(args[:platform]) do |dockerfile, tag|
-    sh "podman build -f #{dockerfile} -t #{tag} ."
+    sh "podman build --platform=linux/amd64 -f #{dockerfile} -t #{tag} ."
   end
 end
 
 desc "Run the tests from within the docker images"
 task :docker_test, [:platform] do |_t, args|
   each_dockerfile(args[:platform]) do |dockerfile, tag|
-    sh "podman run --rm -ti -v #{Dir.pwd}:/src #{tag} rake test"
+    sh "podman run --platform=linux/amd64 --rm -ti -v #{Dir.pwd}:/src #{tag} rake test"
   end
 end
