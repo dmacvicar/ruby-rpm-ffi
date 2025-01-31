@@ -35,6 +35,7 @@ rescue LoadError
   end
 end
 
+desc "Build the docker images for test"
 task :docker_images do
   Dir.glob('_docker/Dockerfile.*').each do |dockerfile|
     tag = 'ruby-rpm-ffi:' + File.extname(dockerfile).delete('.')
@@ -42,6 +43,7 @@ task :docker_images do
   end
 end
 
+desc "Run the tests from within the docker images"
 task :docker_test do
   Dir.glob('_docker/Dockerfile.*').each do |dockerfile|
     tag = 'ruby-rpm-ffi:' + File.extname(dockerfile).delete('.')
