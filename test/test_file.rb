@@ -4,7 +4,7 @@ class RPMFileTests < Minitest::Test
   def test_link_to
     f = RPM::File.new('path', 'md5sum', nil, 42, 1,
                       'owner', 'group', 43, 0o777, 44, 45)
-    assert_equal(nil, f.link_to)
+    assert_nil(f.link_to)
     f = RPM::File.new('path', 'md5sum', 'link_to', 42, 1,
                       'owner', 'group', 43, 0o777, 44, 45)
     assert_equal('link_to', f.link_to)
