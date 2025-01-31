@@ -41,11 +41,19 @@ module RPM
   # @param [String] name Name of the macro
   # @return [String] value of macro +name+
   def self.[](name)
-    val = ''
-    buffer = ::FFI::MemoryPointer.new(:pointer, 1024)
-    buffer.write_string("%{#{name}}")
-    ret = RPM::C.expandMacros(nil, nil, buffer, 1024)
-    buffer.read_string
+    if C::rpm_version_code >= ((4 << 16) + (14 << 8) + (0 << 0))
+      obuf = ::FFI::MemoryPointer.new(:pointer)
+      sbuf = FFI::MemoryPointer.from_string("%{#{name}}")
+      ret = RPM::C.rpmExpandMacros(nil, sbuf, obuf, 0)
+      val = obuf.get_pointer(0)
+      val.read_string
+    else
+      val = ''
+      buffer = ::FFI::MemoryPointer.new(:pointer, 1024)
+      buffer.write_string("%{#{name}}")
+      ret = RPM::C.expandMacros(nil, nil, buffer, 1024)
+      buffer.read_string
+    end
   end
 
   # Setup a macro
