@@ -10,8 +10,6 @@ class RPMRPMTests < Minitest::Test
     # assert_raise(NameError) { RPM::LOG_ALERT }
 
     # require 'rpm/compat'
-    # Nothing should be raised by the following statement
-    RPM::LOG_ALERT
     assert_equal RPM::LOG_ALERT, RPM::LOG[:alert]
   end
 
