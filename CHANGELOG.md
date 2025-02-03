@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Detect librpm.so.8
+- Make rpm_version_macro available in c/rpmmacro
+- Attach addMacro/delMacro as rpmPushMacro and rpmPopMacro in >= 4.14.0
+- Detect librpm.so.9 ([#5](https://github.com/ManageIQ/ruby-rpm-ffi2/pull/5))
+
+### Changed
+- MiniTest::Unit::TestCase is now Minitest::Test
+- Rename rpm gem to rpm2 ([#1](https://github.com/ManageIQ/ruby-rpm-ffi2/pull/1))
+- Replace TravisCI with Github Actions ([#3](https://github.com/ManageIQ/ruby-rpm-ffi2/pull/3))
+
+### Fixed
+- Do not attach deprecated headerNVR on >= 4.14.0
+- Handle deprecated addMacro/delMacro
+- Do not use headerNVR in Package.version ([#4](https://github.com/ManageIQ/ruby-rpm-ffi2/pull/4))
+- Use rpmExpandMacros on rpm v4.14+ for `RPM#[]` ([#12](https://github.com/ManageIQ/ruby-rpm-ffi2/pull/12))
 
 ## [0.0.5] - 2016-07-09
 ### Added
