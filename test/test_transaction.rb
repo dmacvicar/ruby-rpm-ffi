@@ -57,22 +57,22 @@ class RPMTransactionTests < Minitest::Test
   end
 
   def test_test_flag_install
-    skip("hanging")
-
-    filename = 'simple-1.0-0.i586.rpm'
-    pkg = RPM::Package.open(fixture(filename))
+    pkg = RPM::Package.open(fixture(PACKAGE_FILENAME))
 
     Dir.mktmpdir do |dir|
       RPM.transaction(dir) do |t|
         t.flags = RPM::TRANS_FLAG_TEST
-        t.install(pkg, fixture(filename))
+        t.install(pkg, fixture(PACKAGE_FILENAME))
         t.commit
 
-        assert File.exist?(File.join(dir, RPM['_dbpath'], 'Packages')),
-               'rpm db exists'
+        rpmdb_file = RPM::C.rpmvercmp(RPM::C.RPMVERSION, '4.16.0') >= 0 ? 'rpmdb.sqlite' : 'Packages'
 
-        assert !File.exist?('/usr/share/simple/README'),
-               "package #{pkg} was not installed"
+        assert File.exist?(File.join(dir, RPM['_dbpath'], rpmdb_file)), 'rpm db exists'
+        assert !File.exist?('/usr/share/simple/README'), "package #{pkg} was not installed"
+      ensure
+        # Force close so that RPM does not try to do it
+        # when the tmpdir is deleted
+        t.db.close
       end
     end
   end
@@ -80,25 +80,24 @@ class RPMTransactionTests < Minitest::Test
   def test_install_and_remove
     pkg = RPM::Package.open(fixture(PACKAGE_FILENAME))
 
-    skip("hanging")
-
     Dir.mktmpdir do |dir|
       RPM.transaction(dir) do |t|
         begin
           t.install(pkg, fixture(PACKAGE_FILENAME))
           t.commit
 
-          assert File.exist?(File.join(dir, RPM['_dbpath'], 'Packages')),
-                 'rpm db exists'
+          rpmdb_file = RPM::C.rpmvercmp(RPM::C.RPMVERSION, '4.16.0') >= 0 ? 'rpmdb.sqlite' : 'Packages'
 
-          assert File.exist?(File.join(dir, '/usr/share/simple/README')),
-                 "package #{pkg} should be installed"
+          assert File.exist?(File.join(dir, RPM['_dbpath'], rpmdb_file)), 'rpm db exists'
+          assert File.exist?(File.join(dir, '/usr/share/simple/README')), "package #{pkg} should be installed"
         ensure
           # Force close so that RPM does not try to do it
           # when the tmpdir is deleted
           t.db.close
         end
       end
+
+      skip("Commit hangs on package delete")
 
       RPM.transaction(dir) do |t|
         begin
@@ -107,14 +106,11 @@ class RPMTransactionTests < Minitest::Test
           end
 
           t.delete(pkg)
-
           t.order
           t.clean
-
           t.commit
 
-          assert !File.exist?(File.join(dir, '/usr/share/simple/README')),
-                 "package #{pkg} should not be installed"
+          assert !File.exist?(File.join(dir, '/usr/share/simple/README')), "package #{pkg} should not be installed"
         ensure
           # Force close so that RPM does not try to do it
           # when the tmpdir is deleted
