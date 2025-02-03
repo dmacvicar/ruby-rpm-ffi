@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.metadata['rubygems_mfa_required'] = 'true'
   s.metadata['homepage_uri']          = s.homepage
   s.metadata['source_code_uri']       = s.homepage
-  s.metadata['changelog_uri']         = "#{s.homepage}/blob/master/ChangeLog"
+  s.metadata['changelog_uri']         = "#{s.homepage}/blob/master/CHANGELOG.md"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
