@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  schedule:
+  - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build docker images
+      run: rake docker_images
+    - name: Run tests
+      run: rake docker_test

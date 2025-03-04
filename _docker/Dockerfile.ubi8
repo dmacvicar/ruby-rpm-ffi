@@ -1,0 +1,8 @@
+FROM docker.io/redhat/ubi8:latest
+RUN dnf module -y enable ruby:3.1
+RUN dnf install -y ruby git
+RUN gem install bundler
+WORKDIR /src
+RUN ls -lR
+COPY ../ /src
+RUN bundle install

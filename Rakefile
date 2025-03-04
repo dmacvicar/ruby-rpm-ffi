@@ -35,18 +35,18 @@ rescue LoadError
   end
 end
 
+desc "Build the docker images for test"
 task :docker_images do
-  Dir.chdir('_docker') do
-    Dir.glob('Dockerfile.*').each do |dockerfile|
-      tag = 'ruby-rpm-ffi:' + File.extname(dockerfile).delete('.')
-      sh %(docker build -f #{dockerfile} -t #{tag} .)
-    end
+  Dir.glob('_docker/Dockerfile.*').each do |dockerfile|
+    tag = 'ruby-rpm-ffi:' + File.extname(dockerfile).delete('.')
+    sh %(podman build -f #{dockerfile} -t #{tag} .)
   end
 end
 
+desc "Run the tests from within the docker images"
 task :docker_test do
   Dir.glob('_docker/Dockerfile.*').each do |dockerfile|
     tag = 'ruby-rpm-ffi:' + File.extname(dockerfile).delete('.')
-    sh %(docker run -ti -v #{Dir.pwd}:/src #{tag} rake test)
+    sh %(podman run -ti -v #{Dir.pwd}:/src #{tag} rake test)
   end
 end
